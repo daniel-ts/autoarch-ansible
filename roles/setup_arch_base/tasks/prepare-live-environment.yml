@@ -1,0 +1,13 @@
+---
+# steps to prepare the live environment before desktop setup
+
+- name: "set /etc/hostname on live-env"
+  template:
+    src: hostname.j2
+    dest: "/etc/hostname"
+
+- name: lock hostname on live-env
+  command: hostname -F /etc/hostname
+
+- name: update system clock
+  command: /usr/bin/timedatectl set-ntp true

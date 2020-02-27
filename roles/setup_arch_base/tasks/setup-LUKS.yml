@@ -1,0 +1,8 @@
+# file: setup-LUKS.yml
+# sets up LUKS on stated partitions
+
+- name: create LUKS container on system partition
+  luks_device:
+    device: "{{ system_part }}"
+    state: present
+    keyfile: "{{ luks_keyfile }}"

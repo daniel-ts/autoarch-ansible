@@ -1,0 +1,15 @@
+use_efi: yes
+use_LUKS: yes
+grub_device: /dev/sda
+efi_part: /dev/sda1
+#swap_part: /dev/sda2
+system_part: /dev/sda2
+
+# size in MiB
+efi_size: 256
+swap_size: 8192
+
+luks_keyfile: ./vault/wife_syskey
+luks_syspart_name: syspart_crypt
+
+sys_mount: "/mnt/arch_root"

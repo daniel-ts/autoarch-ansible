@@ -1,0 +1,24 @@
+# file: btrfs-layout-flat/mount.yml
+# layout specific mounting of btrfs subvolumes
+---
+# This file uses local variables defined in the calling context.
+- debug:
+    msg: "mounting the btrfs flat layout"
+
+- name: mount subvolume @ on /
+  command: mount -o compress=zstd,subvol=@ {{ device }} {{ mountpoint }}
+
+- name: mount subvolume @home on /home
+  command: mount -o compress=zstd,subvol=@home {{ device }} {{ mountpoint }}/home
+
+- name: mount subvolume @snapshots on /.snapshots
+  command: mount -o compress=zstd,subvol=@snapshots {{ device }} {{ mountpoint }}/.snapshots
+
+- name: mount subvolume /var/cache/pacman/@pkg on /var/cache/pacman
+  command: mount -o compress=zstd,subvol=/var/cache/pacman/@pkg {{ device }} {{ mountpoint }}/var/cache/pacman
+
+- name: mount subvolume /var/@abs on /var/abs
+  command: mount -o compress=zstd,subvol=/var/@ab {{ device }} {{ mountpoint }}/var/abs
+
+- name: mount subvolume /var/@tmp on /var/tmp
+  command: mount -o compress=zstd,subvol=/var/@tmp {{ device }} {{ mountpoint }}/var/tmp

@@ -1,0 +1,8 @@
+# file: AutoArch.yml
+# An ansible script to automatically install Daniel Tschertkow's Arch Linux setup.
+---
+- hosts: arch-desktops
+  user: root
+  roles:
+    - setup_arch_base
+    - configure_arch_system

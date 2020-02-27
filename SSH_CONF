@@ -1,0 +1,7 @@
+Host arschiso
+    HostName 127.0.0.1
+    Port 2222
+    User root
+    UserKnownHostsFile /dev/null
+    StrictHostKeyChecking no
+    IdentityFile ~/.ssh/archiso

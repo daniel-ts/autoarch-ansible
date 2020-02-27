@@ -1,0 +1,14 @@
+# file: btrfs-volumes.yml
+# creates a btrfs-volume on the system partition.
+# Other partitions will be simulated as btrfs subvolumes
+---
+- name: open LUKS container for system partition
+  luks_device:
+    state: opened
+    device: {{ system_part }}
+    keyfile: {{ luks_keyfile }}
+    name: {{ inventory_hostname }}_{{ luks_syspart_name}}
+
+
+
+# remount needed subvolumes

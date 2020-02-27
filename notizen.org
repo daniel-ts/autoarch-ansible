@@ -1,0 +1,118 @@
+#+TITLE: Notizen zu meinem Archlinux Ansible Installationsskript
+#+AUTHOR: Daniel Tschertkow <daniel.tschertkow@posteo.de>
+
+* TODOs
+** TODO git repo initiieren
+** DONE Von dem Plan abweichen für die System-Partition ein LUKS-Keyfile (... nicht Ansible Keyfile) zu benutzen
+** DONE Wo sollte man die Swapfile platzieren?
+Auf ein eigenes btrfs subvolume, was nicht gesnapshotted wird, also z.B. /var/@swapfile
+und einhängen unter /
+→ nirgendwo!
+** TODO Swap partition hinzufügen
+
+* Notizen
+** LUKS
+*** Was ist ein LUKS Keyfile?
+Ich will ein Laufwerk verschlüsseln. Dazu erstelle ich einen LUKS Container auf einer Partition auf dem Laufwerk. Ich muss ein Keyfile hinzufügen. Was ist dieses Keyfile?
+Siehe https://wiki.archlinux.org/index.php/Dm-crypt/Device_encryption#Keyfiles.
+Im Keyfile steht einfach ein plain-text Passwort, unverschlüsselt. Damit das System zu verschlüsseln ist ohne weitere Vorkehrungen ungeeignet.
+Probleme sind:
+  - Keyfile muss selbst verschlüsselt werden, weil das System ansonsten direkt entschlüsselt wird, was den Zweck zunichte macht. Das kann z.B. mit GPG und irgendwelchen =mkdinitcpio= Hooks eingerichtet werden, aber letztendlich landet wieder bei einem Passwort, dass man sich merken muss.
+  - Die Datei kann unbrauchbar gemacht werden, sodass man es selbst auch nicht entschlüsseln kann.
+Vorteile sind:
+  - Entfernt man den Key, ist die Platte wirklich nicht mehr entschüsselbar. Keyspace ist viel viel größer.
+*** Wie erstellt man eine LUKS Keyfile?
+Man generiert einen zufällige Zeichenkette und schreibt sie in eine Datei, z.B. mit dd:
+=dd if=/dev/urandom of=/root/keyfile bs=1024 count=4=
+Diese Datei sollte nicht einfach so rumliegen, daher noch mit GPG verschlüsseln.
+*** Wie fügt man Keyfiles zu LUKS hinzu?
+Entweder mit den cli Tools (=cryptsetup=), oder mit Ansible =luks_device=. Hier ist =state: present= und =keyfile: my-key= wichtig.
+Anschließend öffnen mit =state: opened=. Hier ist ein einzigartiger Name ganz gut.
+*** Wie öffnet man ein LUKS Container und greift drauf zu?
+=cryptsetup open /dev/sda1 foocrypt=.
+Seine neue udev Adresse ist =/dev/mapper/foocrypt=
+*** Wie fügt man sie zu =/etc/crypttab= hinzu?
+- per Hand
+- per Template
+- per Ansible =crypttab=
+
+
+** Ansible
+*** =./ansible.cfg= ist mein Freund
+*** Kann Ansible =luks_device= auch LUKS1?
+Ja, und bisher nur das. Ein Github Issue befasst sich mit der Frage: https://github.com/ansible/ansible/issues/58973
+*** Sind host_vars/ und group_vars/ eigentlich auch yml Dateien?
+Ja, sind sie!
+https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#splitting-out-vars
+*** Wie erstellt man mit Ansible ein Dateisystem?
+=filesystem=
+*** Tasks in andere Tasks importieren
+Ja, das geht problemlos, wie man am Beispiel vom =main.yml= sehen kann. Dazu einfach =include_tasks= oder sogar =import_tasks= benutzen.
+*** Für Variablen, die in einzelnen Tasks gelten
+Können einfach in einem Block mit =block= definiert werden. Man könnte es auch beim =include_tasks= mit =vars:= versuchen.
+*** Ansible variable precedence (lowest to highest priority):
+
+        command line values (eg “-u user”)
+        role defaults [1]
+        inventory file or script group vars [2]
+        inventory group_vars/all [3]
+        playbook group_vars/all [3]
+        inventory group_vars/* [3]
+        playbook group_vars/* [3]
+        inventory file or script host vars [2]
+        inventory host_vars/* [3]
+        playbook host_vars/* [3]
+        host facts / cached set_facts [4]
+        play vars
+        play vars_prompt
+        play vars_files
+        role vars (defined in role/vars/main.yml)
+        block vars (only for tasks in block)
+        task vars (only for the task)
+        include_vars
+        set_facts / registered vars
+        role (and include_role) params
+        include params
+        extra vars (always win precedence)
+
+
+*** Ansible Variablen benutzen nur Buchstaben, Zahlen und Unterstriche. Sie müssen mit einem Buchstaben beginnen
+
+** Entscheidungen
+*** Muss swap verschlüsselt werden?
+Ja, weil Programme Passwörter im Speicher haben können, die vom Scheduler bei Bedarf in den Swap geschrieben werden. Wenn es auf der Festplatte liegt, kann es wiederhergestellt werden.
+*** Wie kann man verschlüsselten Swap realisieren?
+=luks_device= stellt keine Möglichkeit bereit, den Typ der Verschlüsselung zu wählen. Daher ist es umständlich per Ansible ein Swap mit plain encryption zu erstellen.
+**** Mögliche Realisierung:
+***** btrfs subvolume mit einer swap file auf system partition erstellen
+Voraussetzungen: Linux Kernel 5.0+
+Einschränkungen: Kann nicht auf einem subvolume liegen, von dem Snapshots erstellt werden, oder der mehrere Platten umfasst.
+
+Schritte:
+1. Subvolume für Swap erstellen, der nicht gesnapshotted wird: https://wiki.archlinux.org/index.php/Btrfs#Creating_a_subvolume
+2. Swapfile der Größe 0B erstellen:
+   =truncate -s 0 /swapfile=
+3. Copy-on-Write ausschalten:
+   =chattr +C /swapfile=
+4. Kompression ausschalten:
+   =btrfs property set /swapfile compression none=
+5. Und dann die normalen Swapfile Schritte durchführen, also =fallocate /swapfile=, =chmod=, =mkswap=, =swapon= und in =/etc/fstab= speichern
+
+***** swap partition in /etc/crypttab eintragen und beim Herunterfahren verschlüsseln
+ist sehr einfach und es bleibt nichts übrig.
+ Wie mache ich das? Es braucht einfach nur einen Eintrag mit Ansible =crypttab=
+*** Sollte man Partitionierung und sein entsprechendes Mounting entkoppeln?
+Man hat sich für ein Partitionslayout entschieden. Dieses Layout muss an die entsprechenden Orte eingehängt werden. Die Erstellung des Layouts passiert einmalig, das korrekte Einhängen passiert hingegen mehrmals. Trotzdem sind sie eng gekoppelt.
+Nicht entkoppeln, sondern folgendermaßen in Dateien trennen und sie in einen Unterordner ablegen:
+
+#+BEGIN_SRC:
+the_task/
+  |
+  |-- main.yml and others
+  \-- btrfs-layout-flat/
+        |
+        |-- create.yml
+        |-- mount.yml
+        \-- umount.yml
+#+END_SRC
+Wichtig ist, dass =create.yml= sein eigenes, einmaliges Mount und Unmount zur Erstellung des Dateisystems auf dem /richtigen/ Device hat. =btrfs_layout_flat= sollte agnostisch gegenüber dem *Mountpoint* und dem *Device* sein. Das sollte vorher in Variablen deklariert werden.

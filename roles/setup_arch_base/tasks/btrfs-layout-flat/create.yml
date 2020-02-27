@@ -1,0 +1,57 @@
+# file: btrfs-layout-flat/create.yml
+---
+- debug:
+    msg: "creating a btrfs filesystem with flat subvolume layout"
+
+
+- name: create btrfs filesystem on the system partition
+  filesystem:
+    dev: "/dev/mapper/{{ inventory_hostname }}_{{ luks_syspart_name}}"
+    fstype: btrfs
+    force: yes
+
+
+# mount /dev/sdXY to create the btrfs filesystem with the desired subvolumes
+- name: mount the mapped filesystem
+  mount:
+    src: "/dev/mapper/{{ inventory_hostname }}_{{ luks_syspart_name}}"
+    path: {{ sys_mount }}
+    fstype: btrfs
+    opts: compress=zstd
+    state: present
+
+
+- name: create the btrfs root subvolume
+  command: btrfs subvolume create {{ sys_mount }}/@
+
+
+- name: create the btrfs home subvolume
+  command: btrfs subvolume create {{ sys_mount }}/@home
+
+
+- name: create the btrfs snapshots subvolume
+  command: btrfs subvolume create {{ sys_mount }}/@snapshots
+
+
+# subvolumes, which are not directly under root so not to be snapshotted
+- name: mkdir /var/cache/pacman and parent directories
+  command: mkdir -p {{ sys_mount }}/var/cache/pacman
+
+
+- name: create the btrfs pacman cache subvolume
+  command: btrfs subvolume create {{ sys_mount }}/var/cache/pacman/@pkg
+
+
+- name: create the btrfs abs subvolume
+  command: btrfs subvolume create {{ sys_mount }}/var/@abs
+
+
+- name: create the btrfs tmp subvolume
+  command: btrfs subvolume create {{ sys_mount }}/var/@tmp
+
+
+# unmounting the partition to remount it with the subvolumes
+- name: unmount {{ system_part }}
+  mount:
+    state: unmounted
+    path: {{ sys_mount }}
