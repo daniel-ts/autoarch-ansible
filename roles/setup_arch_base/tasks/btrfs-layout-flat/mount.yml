@@ -18,7 +18,7 @@
   command: mount -o compress=zstd,subvol=/var/cache/pacman/@pkg {{ device }} {{ mountpoint }}/var/cache/pacman
 
 - name: mount subvolume /var/@abs on /var/abs
-  command: mount -o compress=zstd,subvol=/var/@ab {{ device }} {{ mountpoint }}/var/abs
+  command: mount -o compress=zstd,subvol=/var/@abs {{ device }} {{ mountpoint }}/var/abs
 
 - name: mount subvolume /var/@tmp on /var/tmp
   command: mount -o compress=zstd,subvol=/var/@tmp {{ device }} {{ mountpoint }}/var/tmp
