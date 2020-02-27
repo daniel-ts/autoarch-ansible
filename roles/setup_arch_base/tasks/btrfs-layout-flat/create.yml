@@ -6,52 +6,45 @@
 
 - name: create btrfs filesystem on the system partition
   filesystem:
-    dev: "/dev/mapper/{{ inventory_hostname }}_{{ luks_syspart_name}}"
+    dev: {{ device }}
     fstype: btrfs
     force: yes
 
 
-# mount /dev/sdXY to create the btrfs filesystem with the desired subvolumes
+# mount system partition to create the btrfs filesystem with the desired subvolumes
 - name: mount the mapped filesystem
-  mount:
-    src: "/dev/mapper/{{ inventory_hostname }}_{{ luks_syspart_name}}"
-    path: {{ sys_mount }}
-    fstype: btrfs
-    opts: compress=zstd
-    state: present
+  command: mount -t btrfs -o compress=zstd {{ device }} {{ mountpoint }}
 
 
 - name: create the btrfs root subvolume
-  command: btrfs subvolume create {{ sys_mount }}/@
+  command: btrfs subvolume create {{ mountpoint }}/@
 
 
-- name: create the btrfs home subvolume
-  command: btrfs subvolume create {{ sys_mount }}/@home
+- name: create the btrfs home subvnnolume
+  command: btrfs subvolume create {{ mountpoint }}/@home
 
 
 - name: create the btrfs snapshots subvolume
-  command: btrfs subvolume create {{ sys_mount }}/@snapshots
+  command: btrfs subvolume create {{ mountpoint }}/@snapshots
 
 
 # subvolumes, which are not directly under root so not to be snapshotted
 - name: mkdir /var/cache/pacman and parent directories
-  command: mkdir -p {{ sys_mount }}/var/cache/pacman
+  command: mkdir -p {{ mountpoint }}/var/cache/pacman
 
 
 - name: create the btrfs pacman cache subvolume
-  command: btrfs subvolume create {{ sys_mount }}/var/cache/pacman/@pkg
+  command: btrfs subvolume create {{ mountpoint }}/var/cache/pacman/@pkg
 
 
 - name: create the btrfs abs subvolume
-  command: btrfs subvolume create {{ sys_mount }}/var/@abs
+  command: btrfs subvolume create {{ mountpoint }}/var/@abs
 
 
 - name: create the btrfs tmp subvolume
-  command: btrfs subvolume create {{ sys_mount }}/var/@tmp
+  command: btrfs subvolume create {{ mountpoint }}/var/@tmp
 
 
 # unmounting the partition to remount it with the subvolumes
-- name: unmount {{ system_part }}
-  mount:
-    state: unmounted
-    path: {{ sys_mount }}
+- name: unmount the system partition
+  command: umount {{ mountpoint }}
