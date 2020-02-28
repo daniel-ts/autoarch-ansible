@@ -1,0 +1,18 @@
+# file: wipe-disk-and-reboot.yml
+#
+---
+- name: wipe disk and reboot system
+  debug:
+    msg: >
+      parted could not make a partition.
+      Wiping partition table and rebooting.
+- command: wipefs -af {{ grub_device|quote }}
+- name: Restart hosts
+  become: no
+  ignore_errors: yes
+  shell: "sleep 2s && shutdown -r now 'Reboot triggered by Ansible'"
+  async: 1
+  poll: 0
+- name: Wait for servers to restart
+  become: no
+  local_action: wait_for host={{ inventory_hostname }} timeout=80 delay=1
