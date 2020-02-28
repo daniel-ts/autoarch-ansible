@@ -5,10 +5,17 @@
 - name: open LUKS container for system partition
   luks_device:
     state: opened
-    device: {{ system_part }}
-    keyfile: {{ luks_keyfile }}
+    device: "{{ system_part }}"
+    keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
     name: {{ inventory_hostname }}_{{ luks_syspart_name}}
 
+- name: create btrfs flat layout and mount it the btrfs way
+  - block:
+      - include_tasks: ./btrfs-layout-flat/create.yml
+      - include_tasks: ./btrfs-layout-flat/mount.yml
+    vars:
+      device: "/dev/mapper/{{ inventory_hostname }}_{{ luks_syspart_name}}"
+      mountpoint: {{ sys_mount }}
 
-
-# remount needed subvolumes
+- name: unmount the btrfs flat layout
+  - block:

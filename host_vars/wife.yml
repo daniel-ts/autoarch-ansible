@@ -6,10 +6,11 @@ swap_part: /dev/sda2
 system_part: /dev/sda3
 
 # size in MiB
-efi_size: 256
-swap_size: 8192
+#efi_size: 256
+#swap_size: 8192
+efi_size: 128
+swap_size: 128
 
-luks_keyfile: ./vault/wife_syskey
+luks_keyfile: wife_syskey
 luks_syspart_name: syspart_crypt
-
-sys_mount: "/mnt/arch_root"
+sys_mount: /mnt/arch_root

@@ -11,3 +11,14 @@
 
 - name: update system clock
   command: /usr/bin/timedatectl set-ntp true
+
+- name: create temporary ansible directory
+  tempfile:
+    state: directory
+    prefix: autoarch
+  register: tmpdir0
+
+- name: make directory {{ tmpdir0 }}/vault/
+  path: "{{ tmpdir0 }}/vault"
+  state: directory
+  mode: '0760'
