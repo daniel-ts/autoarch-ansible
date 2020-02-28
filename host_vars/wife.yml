@@ -2,8 +2,8 @@ use_efi: yes
 use_LUKS: yes
 grub_device: /dev/sda
 efi_part: /dev/sda1
-#swap_part: /dev/sda2
-system_part: /dev/sda2
+swap_part: /dev/sda2
+system_part: /dev/sda3
 
 # size in MiB
 efi_size: 256

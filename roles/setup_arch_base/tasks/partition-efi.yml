@@ -18,11 +18,11 @@
     parted -s {{ grub_device|quote }} set 1 boot on
     parted -s {{ grub_device|quote }} set 1 esp on
 
-# - name: create+flag swap partition
-#   # will not be marked as swap for plain encryption
-#   shell: |
-#     parted -s {{ grub_device|quote }} mkpart swap_part {{ efi_size }}MiB {{ efi_size + swap_size }}MiB
-## I will use a swapfile instead
+- name: create+flag swap partition
+  # will not be marked as swap for plain encryption
+  shell: |
+    parted -s {{ grub_device|quote }} mkpart swap_part {{ efi_size }}MiB {{ efi_size + swap_size }}MiB
+    parted -s {{ grub_device|quote }} set 2 swap on
 
 - name: create system partition
-  command: parted -s {{ grub_device|quote }} mkpart sys_part {{ efi_size }}MiB 100%
+  command: parted -s {{ grub_device|quote }} mkpart sys_part {{ efi_size + swap_size }}MiB 100%
