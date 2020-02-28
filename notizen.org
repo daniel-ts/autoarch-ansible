@@ -35,7 +35,9 @@ Seine neue udev Adresse ist =/dev/mapper/foocrypt=
 - per Hand
 - per Template
 - per Ansible =crypttab=
-
+*** =luks_device= braucht eine lokale Keyfile
+ Datei wird nicht von cryptsetup gefunden, weil sie auf dem System nicht existiert!
+ Sie müsste eigentlich rüberkopiert werden, mit copy nach /tmp/ansible/vault ... oder so.
 
 ** Ansible
 *** =./ansible.cfg= ist mein Freund
@@ -77,6 +79,16 @@ Können einfach in einem Block mit =block= definiert werden. Man könnte es auch
 
 
 *** Ansible Variablen benutzen nur Buchstaben, Zahlen und Unterstriche. Sie müssen mit einem Buchstaben beginnen
+*** read file content
+z.B. für =debug=: ={{ lookup('file', luks_keyfile) }}=. =luks_keyfile= ist dabei auch eine Variable
+*** Werte von Parametern dürfen nicht mit {{ .. }} beginnen.
+Sie sollten in Anführungszeichen stehen.
+device: {{ device }} geht nicht
+device: "{{ device }}" geht
+*** zu jedem Task / Modulaufruf kann erweitert werden
+z.B. durch
+  - Kondition: =when:= ...
+  - Neue, zugreifbare Variable: =register: myvar=
 
 ** Entscheidungen
 *** Muss swap verschlüsselt werden?
