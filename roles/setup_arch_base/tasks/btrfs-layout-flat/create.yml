@@ -6,7 +6,7 @@
 
 - name: create btrfs filesystem on the system partition
   filesystem:
-    dev: {{ device }}
+    dev: "{{ device }}"
     fstype: btrfs
     force: yes
 
@@ -20,7 +20,7 @@
   command: btrfs subvolume create {{ mountpoint }}/@
 
 
-- name: create the btrfs home subvnnolume
+- name: create the btrfs home subvolume
   command: btrfs subvolume create {{ mountpoint }}/@home
 
 

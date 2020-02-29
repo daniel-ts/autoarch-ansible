@@ -6,6 +6,7 @@
     src: "./vault/{{ luks_keyfile }}"
     dest: "{{ tmpdir0.path }}/vault"
     mode: '0700'
+    decrypt: yes
 
 - name: create LUKS container on system partition
   luks_device:

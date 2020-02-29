@@ -3,7 +3,7 @@
 ---
 # This file uses local variables defined in the calling context.
 - debug:
-    msg: "mounting the btrfs flat layout"
+    msg: "mounting the btrfs flat layout, device: {{ device }}, mountpoint: {{ mountpoint }}"
 
 - name: mount subvolume @ on /
   command: mount -o compress=zstd,subvol=@ {{ device }} {{ mountpoint }}

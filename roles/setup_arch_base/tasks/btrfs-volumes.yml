@@ -7,12 +7,12 @@
     state: opened
     device: "{{ system_part }}"
     keyfile: "{{ tmpdir0.path }}/vault/{{ luks_keyfile }}"
-    name: {{ inventory_hostname }}_{{ luks_syspart_name}}
+    name: "{{ inventory_hostname }}_{{ luks_syspart_name}}"
 
 - name: create btrfs flat layout and mount it the btrfs way
-  - block:
-      - include_tasks: ./btrfs-layout-flat/create.yml
-      - include_tasks: ./btrfs-layout-flat/mount.yml
-    vars:
-      device: "/dev/mapper/{{ inventory_hostname }}_{{ luks_syspart_name}}"
-      mountpoint: {{ sys_mount }}
+  block:
+    - include_tasks: ./roles/setup_arch_base/tasks/btrfs-layout-flat/create.yml
+    - include_tasks: ./roles/setup_arch_base/tasks/btrfs-layout-flat/mount.yml
+  vars:
+    device: "/dev/mapper/{{ inventory_hostname }}_{{ luks_syspart_name}}"
+    mountpoint: "{{ sys_mount }}"

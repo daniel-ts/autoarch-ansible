@@ -23,3 +23,9 @@
     path: "{{ tmpdir0.path }}/vault"
     state: directory
     mode: '0760'
+
+- name: create the sys_mount mount point
+  file:
+    path: "{{ sys_mount }}"
+    state: directory
+    mode: '0760'
