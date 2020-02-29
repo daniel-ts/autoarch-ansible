@@ -15,10 +15,11 @@
 - name: create temporary ansible directory
   tempfile:
     state: directory
-    prefix: autoarch
+    prefix: autoarch.
   register: tmpdir0
 
-- name: make directory {{ tmpdir0 }}/vault/
-  path: "{{ tmpdir0 }}/vault"
-  state: directory
-  mode: '0760'
+- name: make a vault directory inside the ansible directory
+  file:
+    path: "{{ tmpdir0.path }}/vault"
+    state: directory
+    mode: '0760'

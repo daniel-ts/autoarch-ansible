@@ -1,18 +1,14 @@
 # file: setup-LUKS.yml
 # sets up LUKS on stated partitions
 
-- name: DEBUG why can't you read the keyfile?
-  debug:
-    msg: temp dir is >>{{ tmpdir0 }}
-
 - name: transfer keyfile
   copy:
     src: "./vault/{{ luks_keyfile }}"
-    dest: "{{ tmpdir0 }}/vault"
+    dest: "{{ tmpdir0.path }}/vault"
     mode: '0700'
 
 - name: create LUKS container on system partition
   luks_device:
     device: "{{ system_part }}"
     state: present
-    keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
+    keyfile: "{{ tmpdir0.path }}/vault/{{ luks_keyfile }}"
