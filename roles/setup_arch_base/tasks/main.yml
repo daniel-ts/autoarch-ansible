@@ -8,4 +8,3 @@
   when: not use_efi
 - include_tasks: setup-LUKS.yml
 - include_tasks: btrfs-volumes.yml
-- include_tasks:

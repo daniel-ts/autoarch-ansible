@@ -8,7 +8,9 @@
 Auf ein eigenes btrfs subvolume, was nicht gesnapshotted wird, also z.B. /var/@swapfile
 und einhängen unter /
 → nirgendwo!
-** TODO Swap partition hinzufügen
+** DONE Swap partition hinzufügen
+** DONE Ein copy von vault Dateien entschlüsselt sie. Ändern!
+versuche es mit der =decrypt: no= Option des =copy= Moduls
 
 * Notizen
 ** LUKS
@@ -38,6 +40,8 @@ Seine neue udev Adresse ist =/dev/mapper/foocrypt=
 *** =luks_device= braucht eine lokale Keyfile
  Datei wird nicht von cryptsetup gefunden, weil sie auf dem System nicht existiert!
  Sie müsste eigentlich rüberkopiert werden, mit copy nach /tmp/ansible/vault ... oder so.
+*** =register= registriert den gesamten Output
+mit =var.subvar= kann auf die einzelnen Felder zugegriffen werden.
 
 ** Ansible
 *** =./ansible.cfg= ist mein Freund
