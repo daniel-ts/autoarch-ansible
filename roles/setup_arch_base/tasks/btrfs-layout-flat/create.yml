@@ -4,7 +4,7 @@
     msg: "creating a btrfs filesystem with flat subvolume layout"
 
 
-- name: create btrfs filesystem on the system partition
+- name: create btrfs filesystem on the LUKS device (system partition)
   filesystem:
     dev: "{{ device }}"
     fstype: btrfs
@@ -12,38 +12,36 @@
 
 
 # mount system partition to create the btrfs filesystem with the desired subvolumes
-- name: mount the mapped filesystem
+- name: mount the mapped device
   command: mount -t btrfs -o compress=zstd {{ device }} {{ mountpoint }}
 
+- name: create directories for the subovolumes to be mounted on
+  command: >
+    mkdir -p
+    {{ mountpoint }}/home
+    {{ mountpoint }}/.snapshots
+    {{ mountpoint }}/var/cache/pacman
+    {{ mountpoint }}/var/abs
+    {{ mountpoint }}/var/tmp
 
 - name: create the btrfs root subvolume
   command: btrfs subvolume create {{ mountpoint }}/@
 
-
 - name: create the btrfs home subvolume
   command: btrfs subvolume create {{ mountpoint }}/@home
-
 
 - name: create the btrfs snapshots subvolume
   command: btrfs subvolume create {{ mountpoint }}/@snapshots
 
-
 # subvolumes, which are not directly under root so not to be snapshotted
-- name: mkdir /var/cache/pacman and parent directories
-  command: mkdir -p {{ mountpoint }}/var/cache/pacman
-
-
 - name: create the btrfs pacman cache subvolume
   command: btrfs subvolume create {{ mountpoint }}/var/cache/pacman/@pkg
-
 
 - name: create the btrfs abs subvolume
   command: btrfs subvolume create {{ mountpoint }}/var/@abs
 
-
 - name: create the btrfs tmp subvolume
   command: btrfs subvolume create {{ mountpoint }}/var/@tmp
-
 
 # unmounting the partition to remount it with the subvolumes
 - name: unmount the system partition
