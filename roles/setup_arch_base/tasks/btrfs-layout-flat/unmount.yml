@@ -5,20 +5,12 @@
 - debug:
     msg: "unmounting the btrfs flat layout"
 
-- name: unmount subvolume @ on /
-  command: umount {{ mountpoint }}
-
 - name: unmount subvolume @home on /home
   command: umount {{ mountpoint }}/home
 
 - name: unmount subvolume @snapshots on /.snapshots
   command: umount {{ mountpoint }}/.snapshots
 
-- name: unmount subvolume /var/cache/pacman/@pkg on /var/cache/pacman
-  command: umount {{ mountpoint }}/var/cache/pacman
-
-- name: unmount subvolume /var/@abs on /var/abs
-  command: umount {{ mountpoint }}/var/abs
-
-- name: unmount subvolume /var/@tmp on /var/tmp
-  command: umount {{ mountpoint }}/var/tmp
+# must be unmounted last
+- name: unmount subvolume @ on /
+  command: umount {{ mountpoint }}
