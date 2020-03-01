@@ -1,0 +1,16 @@
+# file: bootstrap.yml
+# installs the arch linux system
+---
+
+- name: mount efi partition
+  command: mount {{ efi_part }} /efi
+  when: use_efi
+
+- name: mount the btrfs system partiton
+  include_tasks: ./roles/setup_arch_base/tasks/btrfs-layout-flat/mount.yml
+  vars:
+    device: "/dev/mapper/{{ inventory_hostname }}_{{ luks_syspart_name}}"
+    mountpoint: "{{ sys_mount }}"
+
+- name: bootstrap arch linux
+  command: pacstrap {{ sys_mount }} base linux linux-firmware btrfs-progs nano

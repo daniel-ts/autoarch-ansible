@@ -41,6 +41,8 @@ Seine neue udev Adresse ist =/dev/mapper/foocrypt=
 *** =luks_device= braucht eine lokale Keyfile
  Datei wird nicht von cryptsetup gefunden, weil sie auf dem System nicht existiert!
  Sie müsste eigentlich rüberkopiert werden, mit copy nach /tmp/ansible/vault ... oder so.
+*** Wie teste ich, dass ein Passwort in LUKS vorhanden ist?
+=cryptsetup luksOpen= allows to specify =--test-passphrase=, in which case also no destination is needed: =cryptsetup luksOpen --test-passphrase /dev/sda1= returns exit code 0 if the passphrase is correct, and other exit codes on errors. Looking for No key available with this passphrase (or whatever else it says, depending on the version) should make this a proper test.
 
 ** Ansible
 *** =./ansible.cfg= ist mein Freund
@@ -122,6 +124,24 @@ Mehrere Tasks:
     mountpoint: "{{ sys_mount }}"
 
 #+END_SRC
+*** gahter_facts in der Kommandozeile
+ansible -m setup <host in inv>
+*** Wie schreibt man eine Handler?
+Für eine Änderung (="changed": true=) eines Tasks:
+#+BEGIN_SRC
+- name: "set /etc/hostname on live-env"
+  template:
+    src: hostname.j2
+    dest: "/etc/hostname"
+  notify: lock hostname
+#+END_SRC
+
+kann man z.B. in =handlers/main.yml= hinterlassen:
+#+BEGIN_SRC
+- name: lock hostname
+  command: hostname -F /etc/hostname
+#+END_SRC
+=notify= und =name= müssen das Gleiche beinhalten
 ** Linux
 *** will man irgendwas auf /home mounten, dann muss der Ordner bereits existieren
 ** btrfs
@@ -167,3 +187,24 @@ the_task/
         \-- umount.yml
 #+END_SRC
 Wichtig ist, dass =create.yml= sein eigenes, einmaliges Mount und Unmount zur Erstellung des Dateisystems auf dem /richtigen/ Device hat. =btrfs_layout_flat= sollte agnostisch gegenüber dem *Mountpoint* und dem *Device* sein. Das sollte vorher in Variablen deklariert werden.
+*** Wie sollte ich =/etc/fstab= handhaben?
+**** Ansible =mount= Modul
+- Enge Kopplung zwischen Mounting und Anpassung von =/etc/fstab=.
+- Keine Unterscheidung zwischen einmaligem Mounten und permanentem Mounten
++ Einträge sind korrekt
++ Einträge sind verträglich mit bestehenden Einträgen
+**** Ansible template
++ Mount und =/etc/fstab= entkoppelt
+  → Unterscheidung zwischen einmaligem Mounten und permanentem Mounten
+- Korrekte Einträge müssen von Hand erstellt und getestet werden
+- Einträge, die durch anderweitige Vorgänge erstellt wurden, werden ignoriert
++ Deterministisch
+**** arch =genfstab=?
+
+→ Ich entscheide mich für Template
+
+pacstrap erstellt auch ein =/etc/fstab=. Sollte nach pacstrap erstellt werden.
+Ist halb an das Partitionslayout gekoppelt. Das btrfs-layout bestimmt einige Mounts, andere hingegen sind fest (swap und efi).
+
+***** Trennen oder mehrere Templates für jeden Fall?
+... mehrere Templates, eine für jeden Fall

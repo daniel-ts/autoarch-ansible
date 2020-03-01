@@ -4,7 +4,7 @@
 - name: transfer keyfile
   copy:
     src: "./vault/{{ luks_keyfile }}"
-    dest: "{{ tmpdir0.path }}/vault"
+    dest: "{{ tmpdir0 }}/vault"
     mode: '0700'
     decrypt: yes
 
@@ -12,4 +12,4 @@
   luks_device:
     device: "{{ system_part }}"
     state: present
-    keyfile: "{{ tmpdir0.path }}/vault/{{ luks_keyfile }}"
+    keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"

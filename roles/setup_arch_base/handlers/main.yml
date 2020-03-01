@@ -1,0 +1,6 @@
+# file: handlers/main.yml
+# collection of handlers for arch installation
+---
+
+- name: lock hostname
+  command: hostname -F /etc/hostname

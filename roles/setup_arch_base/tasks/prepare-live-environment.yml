@@ -5,22 +5,20 @@
   template:
     src: hostname.j2
     dest: "/etc/hostname"
-
-- name: lock hostname on live-env
-  command: hostname -F /etc/hostname
+  notify: lock hostname
 
 - name: update system clock
   command: /usr/bin/timedatectl set-ntp true
 
 - name: create temporary ansible directory
-  tempfile:
+  file:
     state: directory
-    prefix: autoarch.
-  register: tmpdir0
+    path: "{{ tmpdir0 }}"
+    mode: '0700'
 
 - name: make a vault directory inside the ansible directory
   file:
-    path: "{{ tmpdir0.path }}/vault"
+    path: "{{ tmpdir0 }}/vault"
     state: directory
     mode: '0760'
 

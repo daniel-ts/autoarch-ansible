@@ -7,4 +7,4 @@
 - include_tasks: partition-legacy-bios.yml
   when: not use_efi
 - include_tasks: setup-LUKS.yml
-- include_tasks: btrfs-volumes.yml
+- include_tasks: volumes.yml

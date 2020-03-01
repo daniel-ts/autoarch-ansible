@@ -1,28 +1,60 @@
 ---
 # the ansible command module is used here because the parted module seems to be broken (as of Jan 2020)
+
+- name: get partition table status
+  parted:
+    device: "{{ grub_device }}"
+    state: info
+    unit: MiB
+  register: disk_info
+
+- debug:
+    msg: "{{ disk_info }}"
+
 - name: create gpt partition table
-  block:
-    # -s: --script
-    - name: partition disk
-      command: parted -s {{ grub_device|quote }} mklabel gpt
-  rescue:
-    - name: wipe disk and reboot
-      include_tasks: wipe-disk-and-reboot.yml
-    - name: attempt to partition disk again
-      command: parted -s {{ grub_device|quote }} mklabel gpt
+  command: parted -s {{ grub_device|quote }} mklabel gpt
+  when: disk_info['disk']['table'] == 'unknown'
 
 - name: create+flag efi_part partition
-  # efi_partition is always first
-  shell: |
-    parted -s {{ grub_device|quote }} mkpart efi_part 0% {{ efi_size }}MiB
-    parted -s {{ grub_device|quote }} set 1 boot on
-    parted -s {{ grub_device|quote }} set 1 esp on
+  block:
+    - name: efi_part create
+      command: parted -s {{ grub_device|quote }} mkpart efi_part 1MiB {{ efi_size + 1 }}MiB
+    - name: efi_part flag boot
+      command: parted -s {{ grub_device|quote }} set 1 boot on
+    - name: efi_part flag esp
+      command: parted -s {{ grub_device|quote }} set 1 esp on
+  when: disk_info['partitions'] | length == 0 or
+        disk_info['partitions'][0]['size'] != {{ efi_size|float }} or
+        disk_info['partitions'][0]['name'] != 'efi_part' or
+        disk_info['partitions'][0]['flags'][0] != 'boot' or
+        disk_info['partitions'][0]['flags'][1] != 'esp'
 
-- name: create+flag swap partition
-  # will not be marked as swap for plain encryption
-  shell: |
-    parted -s {{ grub_device|quote }} mkpart swap_part {{ efi_size }}MiB {{ efi_size + swap_size }}MiB
-    parted -s {{ grub_device|quote }} set 2 swap on
+- name: get partition table status
+  parted:
+    device: "{{ grub_device }}"
+    state: info
+    unit: MiB
+  register: disk_info
 
-- name: create system partition
-  command: parted -s {{ grub_device|quote }} mkpart sys_part {{ efi_size + swap_size }}MiB 100%
+- name: create+flag swap_part partition
+  block:
+    - name: swap_part create
+      command: parted -s {{ grub_device|quote }} mkpart swap_part {{ efi_size + 1 }}MiB {{ efi_size + swap_size + 1 }}MiB
+    - name: swap_part flag esp
+      command: parted -s {{ grub_device|quote }} set 2 swap on
+  when: disk_info['partitions']|length == 1 or
+        disk_info['partitions'][1]['size'] != {{ swap_size|float }} or
+        disk_info['partitions'][1]['name'] != 'swap_part' or
+        disk_info['partitions'][1]['flags'][0] != 'swap'
+
+- name: get partition table status
+  parted:
+    device: "{{ grub_device }}"
+    state: info
+    unit: MiB
+  register: disk_info
+
+- name: create sys_part partition
+  command: parted -s {{ grub_device|quote }} mkpart sys_part {{ efi_size + swap_size + 1 }}MiB 100%
+  when: disk_info['partitions']|length == 2 or
+        disk_info['partitions'][2]['name'] != 'sys_part'
