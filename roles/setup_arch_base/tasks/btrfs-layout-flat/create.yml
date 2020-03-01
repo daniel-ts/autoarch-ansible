@@ -12,18 +12,10 @@
 
 
 # mount system partition to create the btrfs filesystem with the desired subvolumes
-- name: mount the mapped device
+- name: mount the mapped device to create subvolumes and directories
   command: mount -t btrfs -o compress=zstd {{ device }} {{ mountpoint }}
 
-- name: create directories for the subovolumes to be mounted on
-  command: >
-    mkdir -p
-    {{ mountpoint }}/home
-    {{ mountpoint }}/.snapshots
-    {{ mountpoint }}/var/cache/pacman
-    {{ mountpoint }}/var/abs
-    {{ mountpoint }}/var/tmp
-
+# top-level subvolumes to be mounted
 - name: create the btrfs root subvolume
   command: btrfs subvolume create {{ mountpoint }}/@
 
@@ -33,15 +25,21 @@
 - name: create the btrfs snapshots subvolume
   command: btrfs subvolume create {{ mountpoint }}/@snapshots
 
-# subvolumes, which are not directly under root so not to be snapshotted
+# directories
+- name: create mountpoints for subvolumes
+  command: mkdir -p {{ mountpoint }}/@/home
+  command: mkdir -p {{ mountpoint }}/@/.snapshots
+  command: mkdir -p {{ mountpoint }}/@/var/cache/pacman
+
+# subvolumes as directories, which are not directly under root so not to be snapshotted
 - name: create the btrfs pacman cache subvolume
-  command: btrfs subvolume create {{ mountpoint }}/var/cache/pacman/@pkg
+  command: btrfs subvolume create {{ mountpoint }}/@/var/cache/pacman/pkg
 
 - name: create the btrfs abs subvolume
-  command: btrfs subvolume create {{ mountpoint }}/var/@abs
+  command: btrfs subvolume create {{ mountpoint }}/@/var/abs
 
 - name: create the btrfs tmp subvolume
-  command: btrfs subvolume create {{ mountpoint }}/var/@tmp
+  command: btrfs subvolume create {{ mountpoint }}/@/var/tmp
 
 # unmounting the partition to remount it with the subvolumes
 - name: unmount the system partition

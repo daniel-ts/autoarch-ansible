@@ -11,6 +11,7 @@ und einhängen unter /
 ** DONE Swap partition hinzufügen
 ** DONE Ein copy von vault Dateien entschlüsselt sie. Ändern!
 versuche es mit der =decrypt: no= Option des =copy= Moduls
+** TODO Das ganze Skript idempotent machen. Wäre schwer, aber geil
 
 * Notizen
 ** LUKS
@@ -40,8 +41,6 @@ Seine neue udev Adresse ist =/dev/mapper/foocrypt=
 *** =luks_device= braucht eine lokale Keyfile
  Datei wird nicht von cryptsetup gefunden, weil sie auf dem System nicht existiert!
  Sie müsste eigentlich rüberkopiert werden, mit copy nach /tmp/ansible/vault ... oder so.
-*** =register= registriert den gesamten Output
-mit =var.subvar= kann auf die einzelnen Felder zugegriffen werden.
 
 ** Ansible
 *** =./ansible.cfg= ist mein Freund
@@ -81,7 +80,6 @@ Können einfach in einem Block mit =block= definiert werden. Man könnte es auch
         include params
         extra vars (always win precedence)
 
-
 *** Ansible Variablen benutzen nur Buchstaben, Zahlen und Unterstriche. Sie müssen mit einem Buchstaben beginnen
 *** read file content
 z.B. für =debug=: ={{ lookup('file', luks_keyfile) }}=. =luks_keyfile= ist dabei auch eine Variable
@@ -93,6 +91,15 @@ device: "{{ device }}" geht
 z.B. durch
   - Kondition: =when:= ...
   - Neue, zugreifbare Variable: =register: myvar=
+*** =register= registriert den gesamten Output
+mit =var.subvar= kann auf die einzelnen Felder zugegriffen werden.
+
+** Linux
+*** will man irgendwas auf /home mounten, dann muss der Ordner bereits existieren
+** btrfs
+*** Subvolumes sind einerseits wie Ordner, andererseite wie Dateisysteme
+→ sie können gemountet werden.
+Nested Subvolumes können einfach in Verzeichnissen eines anderen Subvolumes erstellt werden.
 
 ** Entscheidungen
 *** Muss swap verschlüsselt werden?
