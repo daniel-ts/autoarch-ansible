@@ -94,6 +94,34 @@ z.B. durch
 *** =register= registriert den gesamten Output
 mit =var.subvar= kann auf die einzelnen Felder zugegriffen werden.
 
+*** mehrere Module unter einem Yaml Listenelent gehen nicht
+Konstrukte wie:
+#+BEGIN_SRC
+- name: von mehreren Modulen wird nur das letzte ausgeführt
+  command: ls            ; wird ignoriert
+  command: cd            ; wird ignoriert
+  command: mkdir /hallo  ; wird ausgeführt
+#+END_SRC
+*** Task level vars:
+Ein Task:
+#+BEGIN_SRC
+- name: create btrfs flat layout and mount it the btrfs way
+  include_tasks: ./roles/setup_arch_base/tasks/btrfs-layout-flat/create.yml
+  vars:
+    device: "/dev/mapper/{{ inventory_hostname }}_{{ luks_syspart_name}}"
+    mountpoint: "{{ sys_mount }}"
+#+END_SRC
+Mehrere Tasks:
+#+BEGIN_SRC
+- name: create btrfs flat layout and mount it the btrfs way
+  block:
+    - include_tasks: ./roles/setup_arch_base/tasks/btrfs-layout-flat/create.yml
+    - include_tasks: ./roles/setup_arch_base/tasks/btrfs-layout-flat/mount.yml
+  vars:
+    device: "/dev/mapper/{{ inventory_hostname }}_{{ luks_syspart_name}}"
+    mountpoint: "{{ sys_mount }}"
+
+#+END_SRC
 ** Linux
 *** will man irgendwas auf /home mounten, dann muss der Ordner bereits existieren
 ** btrfs

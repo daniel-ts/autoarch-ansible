@@ -26,10 +26,14 @@
   command: btrfs subvolume create {{ mountpoint }}/@snapshots
 
 # directories
-- name: create mountpoints for subvolumes
-  command: mkdir -p {{ mountpoint }}/@/home
+- name: create /@/.snapshots
   command: mkdir -p {{ mountpoint }}/@/.snapshots
+
+- name: create /@/var/cache/pacman
   command: mkdir -p {{ mountpoint }}/@/var/cache/pacman
+
+- name: create /@/home
+  command: mkdir -p {{ mountpoint }}/@/home
 
 # subvolumes as directories, which are not directly under root so not to be snapshotted
 - name: create the btrfs pacman cache subvolume
