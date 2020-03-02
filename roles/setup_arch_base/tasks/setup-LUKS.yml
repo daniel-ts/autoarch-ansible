@@ -8,8 +8,23 @@
     mode: '0700'
     decrypt: yes
 
-- name: create LUKS container on system partition
-  luks_device:
-    device: "{{ system_part }}"
-    state: present
-    keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
+# for idempotency
+- name: check if LUKS is present on system partition
+  command: lsblk -lin {{ system_part }} -o FSTYPE
+  register: fstype_syspart
+  ignore_errors: True
+
+- name: if LUKS is present, check if the container can be opened with the key
+  command: cryptsetup luksOpen --test-passphrase --key-file {{ tmpdir0 }}/vault/{{ luks_keyfile }} {{ system_part }}
+  when: fstype_syspart.stdout == 'crypto_LUKS'
+  ignore_errors: True
+  register: result
+
+- name: if LUKS is not present or cannot be opened, wipe the system partition and create a new LUKS container
+  block:
+    - command: wipefs -af {{ system_part }}
+    - luks_device:
+        device: "{{ system_part }}"
+        state: present
+        keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
+  when: (result is failed) or (result is skipped)
