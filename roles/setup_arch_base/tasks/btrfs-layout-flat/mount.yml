@@ -6,10 +6,28 @@
     msg: "mounting the btrfs flat layout, device: {{ device }}, mountpoint: {{ mountpoint }}"
 
 - name: mount subvolume @ on /
-  command: mount -o compress=zstd,subvol=@ {{ device }} {{ mountpoint }}
+  mount:
+    src: "{{ device }}"
+    path: "{{ mountpoint }}"
+    fstab: "{{ tmpdir0 }}/fstab"
+    fstype: btrfs
+    opts: compress=zstd,subvol=@
+    state: mounted
 
 - name: mount subvolume @home on /home
-  command: mount -o compress=zstd,subvol=@home {{ device }} {{ mountpoint }}/home
+  mount:
+    src: "{{ device }}"
+    path: "{{ mountpoint }}/home"
+    fstab: "{{ tmpdir0 }}/fstab"
+    fstype: btrfs
+    opts: compress=zstd,subvol=@home
+    state: mounted
 
 - name: mount subvolume @snapshots on /.snapshots
-  command: mount -o compress=zstd,subvol=@snapshots {{ device }} {{ mountpoint }}/.snapshots
+  mount:
+    src: "{{ device }}"
+    path: "{{ mountpoint }}/.snapshots"
+    fstab: "{{ tmpdir0 }}/fstab"
+    fstype: btrfs
+    opts: compress=zstd,subvol=@snapshots
+    state: mounted
