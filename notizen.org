@@ -142,6 +142,20 @@ kann man z.B. in =handlers/main.yml= hinterlassen:
   command: hostname -F /etc/hostname
 #+END_SRC
 =notify= und =name= müssen das Gleiche beinhalten
+*** Präszisere Abbruchbedingungen mit =failed_when=
+man kann mit der Bedingung =failed_when= in Kombination mit =register= sehr genau Fehlerkonditionen festlegen.  Besonders interessant: Der =in= Operator:
+#+BEGIN_SRC
+- name: Check if a file exists in temp and fail task if it does
+  command: ls /tmp/this_should_not_be_here
+  register: result
+  failed_when:
+    - result.rc == 0
+    - '"No such" not in result.stdout'
+#+END_SRC
+*** Beeinflussen, wann etwas als ="changed"= gilt
+Für bessere Reports:
+Bedingung =changed_when:= erlaubt in Kombination mit =register= eine genauere Festlegung der Änderungsbedingung.
+
 ** Linux
 *** will man irgendwas auf /home mounten, dann muss der Ordner bereits existieren
 ** btrfs
