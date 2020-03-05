@@ -9,7 +9,7 @@
     keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
     name: "{{ inventory_hostname }}_{{ luks_syspart_name}}"
 
-- name: create btrfs flat layout and mount it the btrfs way
+- name: create btrfs flat layout
   include_tasks: ./roles/setup_arch_base/tasks/btrfs-layout-flat/create.yml
   vars:
     device: "/dev/mapper/{{ inventory_hostname }}_{{ luks_syspart_name}}"
@@ -21,3 +21,15 @@
     path: /efi
     mode: '0700'
   when: use_efi
+
+- name: create filesystem on efi_part
+  filesystem:
+    dev: "{{ efi_part }}"
+    fstype: vfat
+    force: yes
+
+- name: create filesystem on swap_part
+  filesystem:
+    dev: "{{ swap_part }}"
+    fstype: swap
+    force: no

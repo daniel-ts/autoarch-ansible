@@ -1,0 +1,17 @@
+# GRUB boot loader configuration
+# enabled decrypting a system partition
+
+GRUB_DEFAULT=0
+GRUB_TIMEOUT=5
+GRUB_DISTRIBUTOR="Arch"
+GRUB_CMDLINE_LINUX_DEFAULT="cryptdevice={{ system_part }}:{{ hostname }}_{{ syspart_crypt }} loglevel=3 quiet"
+GRUB_CMDLINE_LINUX=""
+
+
+GRUB_ENABLE_CRYPTODISK=y
+GRUB_PRELOAD_MODULES="part_gpt part_msdos"
+GRUB_TIMEOUT_STYLE=menu
+GRUB_TERMINAL_INPUT=console
+GRUB_GFXMODE=auto
+GRUB_GFXPAYLOAD_LINUX=keep
+GRUB_DISABLE_RECOVERY=true

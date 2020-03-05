@@ -1,0 +1,36 @@
+# file: configure-base-system.yml
+# moves basic configuration files to appropriate places
+# and runs configure commands which concern the whole system
+---
+
+- name: set timezone
+  command: arch-chroot {{ sys_mount }} {{ env }} ln -sf {{ zoneinfo }} /etc/localtime
+
+- name: set time
+  command: arch-chroot {{ sys_mount }} {{ env }} hwclock --systohc
+
+- name: copy locale.gen
+  copy:
+    src: files/etc/locale.gen
+    dest: "{{ sys_mount }}/etc/locale.gen"
+
+- name: run locale-gen
+  command: arch-chroot {{ sys_mount }} {{ env }} locale-gen
+
+- name: copy locale.conf
+  copy:
+    src: files/etc/locale.conf
+    dest: "{{ sys_mount }}/etc/locale.conf"
+
+- name: copy vconsole.conf
+  copy:
+    src: files/etc/vconsole.conf
+    dest: "{{ sys_mount }}/etc/vconsole.conf"
+
+- name: create /etc/hosts
+  template:
+    src: etc/hosts.j2
+    dest: "{{ sys_mount }}/etc/hosts"
+
+- name: set root password
+  shell: arch-chroot {{ sys_mount }} {{ env }} echo -n {{ rootpw | password_hash('sha512') }} | passwd

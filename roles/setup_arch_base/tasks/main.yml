@@ -8,3 +8,7 @@
   when: not use_efi
 - include_tasks: setup-LUKS.yml
 - include_tasks: volumes.yml
+- include_tasks: bootstrap.yml
+- include_tasks: configure-boot-efi.yml
+  when: use_efi
+- include_tasks: configure-base-system.yml

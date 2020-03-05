@@ -40,7 +40,7 @@
   block:
     - name: swap_part create
       command: parted -s {{ grub_device|quote }} mkpart swap_part {{ efi_size + 1 }}MiB {{ efi_size + swap_size + 1 }}MiB
-    - name: swap_part flag esp
+    - name: swap_part flag swap
       command: parted -s {{ grub_device|quote }} set 2 swap on
   when: disk_info['partitions']|length == 1 or
         disk_info['partitions'][1]['size'] != {{ swap_size|float }} or

@@ -1,0 +1,36 @@
+# file: configure-boot-efi.yml
+# installs and configures the bootloader and intiramfs
+---
+
+- name: mount efi partition
+  mount:
+    src: "{{ efi_part }}"
+    path: /efi
+    fstype: vfat
+    state: mounted
+    fstab: "{{ tmpdir0 }}/fstab"
+  when: use_efi
+
+# should be mounted already, but just in case
+- name: mount the btrfs system partiton
+  include_tasks: ./roles/setup_arch_base/tasks/btrfs-layout-flat/mount.yml
+  vars:
+    device: "/dev/mapper/{{ inventory_hostname }}_{{ luks_syspart_name}}"
+    mountpoint: "{{ sys_mount }}"
+
+
+- name: set grub default config
+  template:
+    src: etc/default/grub.j2
+    dest: "{{ sys_mount }}/etc/default/grub"
+
+- name: set mkinitcpio.conf
+  copy:
+    src: etc/mkinitcpio-btrfs-crypt.conf
+    dest: "{{ sys_mount }}/etc/mkinitcpio.conf"
+
+- name: install grub
+  command: arch-chroot {{ sys_mount }} {{ env }} grub-install --traget=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB
+
+- name: make initial ramdisk
+  command: arch-chroot {{ sys_mount }} {{ env }} mkinitcpio -P
