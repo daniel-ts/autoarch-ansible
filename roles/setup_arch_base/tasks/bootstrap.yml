@@ -10,9 +10,10 @@
 
 # how to make this idempotent?
 - name: bootstrap arch linux
-  command: pacstrap {{ sys_mount }} base linux linux-firmware btrfs-progs nano
+  command: pacstrap {{ sys_mount }} base linux linux-firmware grub efibootmgr btrfs-progs nano
 
 - name: set /etc/fstab
   template:
     src: btrfs-layout-flat/fstab.j2
-    dest: "{{ sys_mount }}"/etc/fstab
+    dest: "{{ sys_mount }}/etc/fstab"
+    force: yes

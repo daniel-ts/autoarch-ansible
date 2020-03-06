@@ -5,7 +5,7 @@
 - name: mount efi partition
   mount:
     src: "{{ efi_part }}"
-    path: /efi
+    path: "{{ sys_mount }}/efi"
     fstype: vfat
     state: mounted
     fstab: "{{ tmpdir0 }}/fstab"
@@ -30,7 +30,7 @@
     dest: "{{ sys_mount }}/etc/mkinitcpio.conf"
 
 - name: install grub
-  command: arch-chroot {{ sys_mount }} {{ env }} grub-install --traget=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB
+  command: arch-chroot {{ sys_mount }} {{ env }} grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB
 
 - name: make initial ramdisk
   command: arch-chroot {{ sys_mount }} {{ env }} mkinitcpio -P

@@ -4,7 +4,7 @@
 GRUB_DEFAULT=0
 GRUB_TIMEOUT=5
 GRUB_DISTRIBUTOR="Arch"
-GRUB_CMDLINE_LINUX_DEFAULT="cryptdevice={{ system_part }}:{{ hostname }}_{{ syspart_crypt }} loglevel=3 quiet"
+GRUB_CMDLINE_LINUX_DEFAULT="cryptdevice={{ system_part }}:{{ inventory_hostname }}_{{ luks_syspart_name }}:allow-discards quiet"
 GRUB_CMDLINE_LINUX=""
 
 

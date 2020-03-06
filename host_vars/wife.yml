@@ -14,3 +14,5 @@ swap_size: 128
 luks_keyfile: wife_syskey
 luks_syspart_name: syspart_crypt
 sys_mount: /mnt/arch_root
+
+rootpw: "$6$mysecretsalt$hvehUWS5j6XEiiB31rDew6.byx3i57VmHbJ1YNzOa4/l/cQWS3ox8cDKmjtn14KdE.5Bb/RH6u57YdzHlCHyE/"

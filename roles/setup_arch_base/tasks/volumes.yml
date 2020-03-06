@@ -18,7 +18,7 @@
 - name: create /efi mount point
   file:
     state: directory
-    path: /efi
+    path: "{{ sys_mount }}/efi"
     mode: '0700'
   when: use_efi
 

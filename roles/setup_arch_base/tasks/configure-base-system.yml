@@ -32,5 +32,6 @@
     src: etc/hosts.j2
     dest: "{{ sys_mount }}/etc/hosts"
 
-- name: set root password
-  shell: arch-chroot {{ sys_mount }} {{ env }} echo -n {{ rootpw | password_hash('sha512') }} | passwd
+- name: set root password shell
+  shell: |
+    echo -n 'root:{{ rootpw }}'  | chpasswd --encrypted --root {{ sys_mount }}

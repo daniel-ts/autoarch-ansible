@@ -12,6 +12,12 @@ und einhängen unter /
 ** DONE Ein copy von vault Dateien entschlüsselt sie. Ändern!
 versuche es mit der =decrypt: no= Option des =copy= Moduls
 ** TODO Das ganze Skript idempotent machen. Wäre schwer, aber geil
+** DONE grub config: dmname setzen
+siehe https://wiki.archlinux.org/index.php/Dm-crypt/System_configuration#Using_encrypt_hook
+
+** TODO verbleibende Dinge nach Installation
+*** TODO bootloader installieren
+*** TODO
 
 * Notizen
 ** LUKS
@@ -156,8 +162,11 @@ man kann mit der Bedingung =failed_when= in Kombination mit =register= sehr gena
 Für bessere Reports:
 Bedingung =changed_when:= erlaubt in Kombination mit =register= eine genauere Festlegung der Änderungsbedingung.
 
+*** man kann Jinja2 Variablen innerhalb von Variablen benutzen:
+=msg: '{{ "{{rootpw}}" | password_hash("sha512")}}'=
 ** Linux
 *** will man irgendwas auf /home mounten, dann muss der Ordner bereits existieren
+*** Muss die efi Partition in fstab gemounted werden?
 ** btrfs
 *** Subvolumes sind einerseits wie Ordner, andererseite wie Dateisysteme
 → sie können gemountet werden.
@@ -222,3 +231,19 @@ Ist halb an das Partitionslayout gekoppelt. Das btrfs-layout bestimmt einige Mou
 
 ***** Trennen oder mehrere Templates für jeden Fall?
 ... mehrere Templates, eine für jeden Fall
+*** Wie boote ich in ein verschlüsseltes System?
+Bei EFI-Boot liegt der Bootloader in der speziellen EFI Partition. Sie ist unverschlüsselt. So kann die UEFI-Firmware des Motherboards den Bootloader laden. Anschließend muss der Bootloader das Kernel-Image in den Speicher laden und den Kernel ausführen. Der Bootloader meiner Wahl ist GRUB.
+
+**** Mein /boot ist verschlüsselt. What do?
+Bei der Installation von GRUB kann sein =core.img= mit einem Modul für das Entschlüsseln des Laufwerks ausgestattet werden. GRUB wird, bevor er =/boot= findet, nach der LUKS Passphrase fragen und anschließend die komplette System-Partition entschlüsseln. Das ist alles, was ich will. =/boot= liegt in einem btrfs Dateisystem (subvol @). Kann GRUB das lesen? Ja, ohne Probleme.
+
+**** /etc/default/grub
+=GRUB_ENABLE_CRYPTODISK=y= und =GRUB_CMDLINE_LINUX_DEFAULT= auf ="cryptdevice={{ system_part }} loglevel=3 quiet"= setzen.
+
+**** /etc/mkinitcpio.conf
+Konfiguriert die Ausführung des Arch Linux spezifischen Skripts: =mkinitcpio=.
+Dieses Skript bestimmt die Erstellung des Initramfs Images, welches den Kernel und das erste in-memory Dateisystem beinhaltet und vom Bootloader entpackt und in den RAM geladen wird. Typischerweise liegt dieses Kernel Image im =/boot= Verzeichnis.
+
+=encrypt= Hook setzen und /usr/bin/btrfs als Binary hinzufügen.
+
+**** crypttab zum Verschlüsseln von Swap erstellen.
