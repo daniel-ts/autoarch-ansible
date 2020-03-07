@@ -21,16 +21,19 @@
   copy:
     src: files/etc/locale.conf
     dest: "{{ sys_mount }}/etc/locale.conf"
+    force: yes
 
 - name: copy vconsole.conf
   copy:
     src: files/etc/vconsole.conf
     dest: "{{ sys_mount }}/etc/vconsole.conf"
+    force: yes
 
 - name: create /etc/hosts
   template:
     src: etc/hosts.j2
     dest: "{{ sys_mount }}/etc/hosts"
+    force: yes
 
 - name: set root password shell
   shell: |
