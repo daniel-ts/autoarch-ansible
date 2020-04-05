@@ -1,0 +1,53 @@
+# file: partition.yml
+---
+
+- name: create EFI partition
+  parted:
+    device: "{{ grub_device}}"
+    state: present
+    label: gpt
+    name: "efi_part"
+    number: 1
+    flags: [boot, esp]
+    part_start: 0%
+    part_end: "{{ efi_size }}MiB"
+    unit: MiB
+
+# when no swapfile is used
+- name: create swap partition
+  parted:
+    device: "{{ grub_device}}"
+    state: present
+    label: gpt
+    name: "swap_part"
+    number: 2
+    flags: [swap]
+    part_start: "{{ efi_size }}MiB"
+    part_end: "{{ efi_size + swap_size }}MiB"
+    unit: MiB
+  when: not use_swapfile
+
+- name: create system partition
+  parted:
+    device: "{{ grub_device}}"
+    state: present
+    label: gpt
+    name: "sys_part"
+    number: 3
+    part_start: "{{ efi_size + swap_size }}MiB"
+    part_end: 100%
+    unit: MiB
+  when: not use_swapfile
+
+# when swapfile is used
+- name: create system partition
+  parted:
+    device: "{{ grub_device}}"
+    state: present
+    label: gpt
+    name: "sys_part"
+    number: 2
+    part_start: "{{ efi_size }}MiB"
+    part_end: 100%
+    unit: MiB
+  when: use_swapfile

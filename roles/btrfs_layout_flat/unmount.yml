@@ -1,0 +1,16 @@
+# file: btrfs-layout-flat/unmount.yml
+# layout specific unmounting of btrfs subvolumes
+---
+# This file uses local variables defined in the calling context.
+- debug:
+    msg: "unmounting the btrfs flat layout"
+
+- name: unmount subvolume @home on /home
+  command: umount {{ mountpoint }}/home
+
+- name: unmount subvolume @snapshots on /.snapshots
+  command: umount {{ mountpoint }}/.snapshots
+
+# must be unmounted last
+- name: unmount subvolume @ on /
+  command: umount {{ mountpoint }}

@@ -164,6 +164,23 @@ Bedingung =changed_when:= erlaubt in Kombination mit =register= eine genauere Fe
 
 *** man kann Jinja2 Variablen innerhalb von Variablen benutzen:
 =msg: '{{ "{{rootpw}}" | password_hash("sha512")}}'=
+*** Conditionally set variables in e.g /host_vars
+=system_part: "{{ '/dev/sda2' if use_swapfile else '/dev/sda3' }}"=
+*** Conditionally execute roles in Playbook
+mit roles: role: when
+#+BEGIN_SRC
+- hosts: arch_desktops
+  user: root
+  roles:
+    - role: partition_efi
+      when: use_efi
+
+#+END_SRC
+*** connection test mit =setup= module
+=ansible -m setup -i inventory all=
+'all' ist hier das Pattern für die Hosts für die das Modul ausgeführt werden soll
+
+
 ** Linux
 *** will man irgendwas auf /home mounten, dann muss der Ordner bereits existieren
 *** Muss die efi Partition in fstab gemounted werden?

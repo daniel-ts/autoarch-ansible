@@ -1,0 +1,16 @@
+# file: create_filesystems.yml
+# creates only the genric filesystems for EFI and SWAP
+---
+
+- name: format EFI partiton
+  filesystem:
+    dev: "{{ efi_part }}"
+    fstype: vfat
+    force: yes
+
+- name: format SWAP partition
+  filesystem:
+    dev: "{{ swap_part }}"
+    fstype: swap
+    force: no
+  when: not use_swapfile

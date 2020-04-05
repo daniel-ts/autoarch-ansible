@@ -1,3 +1,4 @@
 tmpdir0: /tmp/autoarch
 env: "env PATH=/usr/local/sbin:/usr/local/bin:/usr/bin"
 zoneinfo: /usr/share/zoneinfo/Europe/Berlin
+sys_mount: /mnt/arch_root

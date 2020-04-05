@@ -1,0 +1,10 @@
+# file: main.yml
+# changes hostname of host
+---
+
+- name: "set /etc/hostname on live-env"
+  template:
+    src: etc/hostname.j2
+    dest: "/etc/hostname"
+    force: yes
+  notify: lock hostname

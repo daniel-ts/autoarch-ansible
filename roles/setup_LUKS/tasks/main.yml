@@ -1,12 +1,6 @@
 # file: setup-LUKS.yml
-# sets up LUKS on stated partitions
+# sets up LUKS on `device`. Passphrase must me stored inside `keyfile` (path).
 ---
-- name: transfer keyfile
-  copy:
-    src: "./vault/{{ luks_keyfile }}"
-    dest: "{{ tmpdir0 }}/vault"
-    mode: '0700'
-    decrypt: yes
 
 # for idempotency
 - name: check if LUKS is present on system partition
@@ -24,7 +18,7 @@
   block:
     - command: wipefs -af {{ system_part }}
     - luks_device:
-        device: "{{ system_part }}"
+        device: "{{ device }}"
         state: present
-        keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
+        keyfile: "{{ keyfile }}"
   when: (result is failed) or (result is skipped)

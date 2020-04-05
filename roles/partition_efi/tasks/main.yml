@@ -1,0 +1,5 @@
+# file: main.yml of partition_efi role
+# partition table is GPT because of EFI
+---
+- include_tasks: parition.yml
+- include_tasks: create_filesystems.yml

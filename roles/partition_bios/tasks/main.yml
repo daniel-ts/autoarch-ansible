@@ -1,0 +1,37 @@
+# file: main.yml of partition_bios role
+# partition table is MBR
+---
+# when no swapfile is used
+- name: create swap partition
+  parted:
+    device: "{{ grub_device }}"
+    state: present
+    label: msdos
+    number: 1
+    part_start: 0%
+    part_end: "{{ swap_size }}MiB"
+    unit: MiB
+  when: not use_swapfile
+
+- name: create system partition
+  parted:
+    device: "{{ grub_device }}"
+    state: present
+    label: msdos
+    number: 2
+    part_start: "{{ swap_size }}MiB"
+    part_end: 100%
+    unit: MiB
+  when: not use_swapfile
+
+# when swapfile is used
+- name: create system partition
+  parted:
+    device: "{{ grub_device }}"
+    state: present
+    label: msdos
+    number: 1
+    part_start: 0%
+    part_end: 100%
+    unit: MiB
+  when: use_swapfile
