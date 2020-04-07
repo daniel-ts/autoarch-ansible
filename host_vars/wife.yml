@@ -4,10 +4,13 @@ use_LUKS: yes
 
 grub_device: /dev/sda
 
-# no conditionals, set it yourself:
-efi_part: /dev/sda1
-swap_part: /dev/sda2
-system_part: /dev/sda3
+## no conditionals, set it yourself:
+# efi_part: /dev/sda1
+# swap_part: /dev/sda2
+# system_part: /dev/sda3
+
+swap_part: /dev/sda1
+system_part: /dev/sda2
 
 # size in MiB
 #efi_size: 256
@@ -15,7 +18,8 @@ system_part: /dev/sda3
 efi_size: 128
 swap_size: 128
 
-luks_keyfile: wife_syskey
+luks_passphrase: wife_passphrase
+luks_keyfile: wife_crypto_keyfile.bin
 luks_syspart_name: cryptroot
 
-rootpw: "$6$mysecretsalt$hvehUWS5j6XEiiB31rDew6.byx3i57VmHbJ1YNzOa4/l/cQWS3ox8cDKmjtn14KdE.5Bb/RH6u57YdzHlCHyE/"
+rootpw: "$6$sercetsalt$HhihtEXfpW..9m3NjqjDYgmL7wi9m/sH7gjuefoNiK7hy7ajWZ06BAVdpiYIfzWBuiusknv1DydviBY28vyFd."

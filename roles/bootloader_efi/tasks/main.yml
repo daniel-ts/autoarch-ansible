@@ -1,0 +1,32 @@
+# file: bootloader_efi/tasks/main.yml
+---
+
+- name: mount efi partition
+  mount:
+    src: "{{ efi_part }}"
+    path: "{{ sys_mount }}/efi"
+    fstype: vfat
+    state: mounted
+    fstab: "{{ tmpdir0 }}/fstab"
+  when: use_efi
+
+- name: set grub default config
+  template:
+    src: etc/default/grub.j2
+    dest: "{{ sys_mount }}/etc/default/grub"
+    force: yes
+
+- name: set mkinitcpio.conf
+  copy:
+    src: etc/mkinitcpio-btrfs-crypt.conf
+    dest: "{{ sys_mount }}/etc/mkinitcpio.conf"
+    force: yes
+
+- name: make initial ramdisk
+  command: arch-chroot {{ sys_mount }} {{ env }} mkinitcpio -P
+
+- name: install grub
+  command: arch-chroot {{ sys_mount }} {{ env }} grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB --recheck
+
+- name: make grub config
+  command: arch-chroot {{ sys_mount }} {{ env }} grub-mkconfig -o /boot/grub/grub.cfg

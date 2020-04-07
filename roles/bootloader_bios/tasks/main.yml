@@ -1,0 +1,23 @@
+# file: bootloader_bios/tasks/main.yml
+---
+
+- name: set grub default config
+  template:
+    src: etc/default/grub.j2
+    dest: "{{ sys_mount }}/etc/default/grub"
+    force: yes
+
+- name: set mkinitcpio.conf
+  copy:
+    src: etc/mkinitcpio-btrfs-crypt.conf
+    dest: "{{ sys_mount }}/etc/mkinitcpio.conf"
+    force: yes
+
+- name: make initial ramdisk
+  command: arch-chroot {{ sys_mount }} {{ env }} mkinitcpio -P
+
+- name: install grub
+  command: arch-chroot {{ sys_mount }} {{ env }} grub-install --target=i386-pc {{ grub_device }}
+
+- name: make grub config
+  command: arch-chroot {{ sys_mount }} {{ env }} grub-mkconfig -o /boot/grub/grub.cfg

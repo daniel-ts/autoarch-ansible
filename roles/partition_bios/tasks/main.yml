@@ -1,6 +1,7 @@
 # file: main.yml of partition_bios role
 # partition table is MBR
 ---
+
 # when no swapfile is used
 - name: create swap partition
   parted:

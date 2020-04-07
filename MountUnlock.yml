@@ -1,0 +1,42 @@
+# file: MountUnlock.yml
+---
+- hosts: arch_desktops
+  user: root
+  tasks:
+    - name: create temporary ansible directory
+      file:
+        state: directory
+        path: "{{ tmpdir0 }}"
+        mode: '0700'
+
+    - name: make a vault directory inside the ansible directory
+      file:
+        path: "{{ tmpdir0 }}/vault"
+        state: directory
+        mode: '0700'
+
+    - name: create the sys_mount mount point
+      file:
+        path: "{{ sys_mount }}"
+        state: directory
+        mode: '0760'
+
+    - name: transfer keyfile
+      copy:
+        src: "./vault/{{ luks_keyfile }}"
+        dest: "{{ tmpdir0 }}/vault"
+        mode: '0700'
+        decrypt: yes
+
+    - name: open encrypted system partition
+      luks_device:
+        keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
+        name: "{{ luks_syspart_name }}"
+        device: "{{ system_part }}"
+        state: opened
+
+    - include_tasks: roles/btrfs_layout_flat/mount.yml
+      vars:
+        device: "/dev/mapper/{{ luks_syspart_name }}"
+        mountpoint: "{{ sys_mount }}"
+        tmpdir: "{{ tmpdir0 }}"

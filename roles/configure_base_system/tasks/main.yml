@@ -1,0 +1,39 @@
+# file: configure_base_system/main.yml
+# can't be done idempotently, because it must be done in a chroot on the remote machine
+---
+
+- name: set timezone
+  command: arch-chroot {{ sys_mount }} {{ env }} ln -sf {{ zoneinfo }} /etc/localtime
+
+- name: set time
+  command: arch-chroot {{ sys_mount }} {{ env }} hwclock --systohc
+
+- name: copy locale.gen
+  copy:
+    src: files/etc/locale.gen
+    dest: "{{ sys_mount }}/etc/locale.gen"
+
+- name: run locale-gen
+  command: arch-chroot {{ sys_mount }} {{ env }} locale-gen
+
+- name: copy locale.conf
+  copy:
+    src: files/etc/locale.conf
+    dest: "{{ sys_mount }}/etc/locale.conf"
+    force: yes
+
+- name: copy vconsole.conf
+  copy:
+    src: files/etc/vconsole.conf
+    dest: "{{ sys_mount }}/etc/vconsole.conf"
+    force: yes
+
+- name: create /etc/hosts
+  template:
+    src: etc/hosts.j2
+    dest: "{{ sys_mount }}/etc/hosts"
+    force: yes
+
+- name: set root password shell
+  shell: |
+    echo -n 'root:{{ rootpw }}'  | chpasswd --encrypted --root {{ sys_mount }}

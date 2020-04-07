@@ -1,24 +1,30 @@
 # file: setup-LUKS.yml
-# sets up LUKS on `device`. Passphrase must me stored inside `keyfile` (path).
+# sets up LUKS on `device`. Passphrase must me stored inside `passphrase` (path).
+# `keyfile` is required for alternative unlocking
 ---
 
 # for idempotency
 - name: check if LUKS is present on system partition
-  command: lsblk -lin {{ system_part }} -o FSTYPE
+  command: lsblk -lin {{ device }} -o FSTYPE
   register: fstype_syspart
   ignore_errors: True
 
 - name: if LUKS is present, check if the container can be opened with the key
-  command: cryptsetup luksOpen --test-passphrase --key-file {{ tmpdir0 }}/vault/{{ luks_keyfile }} {{ system_part }}
+  command: cryptsetup luksOpen --test-passphrase --key-file {{ tmpdir0 }}/vault/{{ passphrase }} {{ device }}
   when: fstype_syspart.stdout == 'crypto_LUKS'
   ignore_errors: True
   register: result
 
 - name: if LUKS is not present or cannot be opened, wipe the system partition and create a new LUKS container
   block:
-    - command: wipefs -af {{ system_part }}
-    - luks_device:
-        device: "{{ device }}"
-        state: present
-        keyfile: "{{ keyfile }}"
+    - command: wipefs -af {{ device }}
+    ## does only luks2, need luks1 for GRUB
+    # - luks_device:
+    #     device: "{{ device }}"
+    #     state: present
+    #     keyfile: "{{ keyfile }}"
+    ## create luks container
+    - command: cryptsetup --batch-mode --type luks1 --cipher aes-xts-plain64 --key-size 256 --hash sha256 --iter-time 2000 --key-file {{passphrase}} luksFormat {{device}}
+    ## add keyfile to another slot
+    - command: cryptsetup --batch-mode --type luks1 --key-file {{passphrase}} luksAddKey {{device}} {{keyfile}}
   when: (result is failed) or (result is skipped)

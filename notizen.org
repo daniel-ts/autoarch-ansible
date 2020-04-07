@@ -18,6 +18,16 @@ siehe https://wiki.archlinux.org/index.php/Dm-crypt/System_configuration#Using_e
 ** TODO verbleibende Dinge nach Installation
 *** TODO bootloader installieren
 *** TODO
+** TODO bootstrap_archlinux roles schreiben
+Sie soll Archlinux auf der Systempartition installieren.
+*** Pre condtitions
+- eine live Umgebung ist eingerichtet
+- die Festplatten sind wie gewünscht partitioniert, formatiert und ggf. verschlüsselt.
+- alle Partitionen sind korrekt gemountet
+*** Post condition
+- arch ist auf der Systempartition installiert, aber es befindet sich kein Bootloader drauf
+- das System weicht in keiner Weise von der absoluten Standardinstallation ab
+
 
 * Notizen
 ** LUKS

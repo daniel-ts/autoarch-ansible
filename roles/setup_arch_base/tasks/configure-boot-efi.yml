@@ -15,7 +15,7 @@
 - name: mount the btrfs system partiton
   include_tasks: ./roles/setup_arch_base/tasks/btrfs-layout-flat/mount.yml
   vars:
-    device: "/dev/mapper/{{ inventory_hostname }}_{{ luks_syspart_name}}"
+    device: "/dev/mapper/{{ luks_syspart_name}}"
     mountpoint: "{{ sys_mount }}"
 
 
