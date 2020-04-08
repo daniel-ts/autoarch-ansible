@@ -23,3 +23,6 @@ luks_keyfile: wife_crypto_keyfile.bin
 luks_syspart_name: cryptroot
 
 rootpw: "$6$sercetsalt$HhihtEXfpW..9m3NjqjDYgmL7wi9m/sH7gjuefoNiK7hy7ajWZ06BAVdpiYIfzWBuiusknv1DydviBY28vyFd."
+
+pkg_update: "pacman -Syuq --noconfirm --noprogressbar"
+pkg_install: "pacman -Sq --noconfirm --noprogressbar --needed"
