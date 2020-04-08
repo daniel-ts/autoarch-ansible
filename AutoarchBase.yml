@@ -116,12 +116,13 @@
       when: not use_swapfile
 
     ## install software in chroot
-
     - block:
       - name: update chroot
         command: "arch-chroot {{ sys_mount }} {{ env }} {{ pkg_update }}"
       - name: install network manager
         command: "arch-chroot {{ sys_mount }} {{ env }} {{ pkg_install }} networkmanager networkmanager-openconnect networkmanager-openvpn networkmanager-vpnc nm-connection-editor network-manager-applet"
+      - name: install openssh
+        command: "arch-chroot {{ sys_mount }} {{ env }} {{ pkg_install }} openssh"
       - name: install git
         command: "arch-chroot {{ sys_mount }} {{ env }} {{ pkg_install }} git"
       - name: install ansible
