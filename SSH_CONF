@@ -4,4 +4,4 @@ Host wife
     User root
     UserKnownHostsFile /dev/null
     StrictHostKeyChecking no
-    IdentityFile ~/.ssh/archiso
+    IdentityFile ~/dt_wife

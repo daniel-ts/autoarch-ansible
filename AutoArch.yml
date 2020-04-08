@@ -1,0 +1,168 @@
+# file: AutoArch.yml
+# Playbook for installing a basic arch system
+# with NetworkManager and sshd running.
+---
+- hosts: arch_desktops
+  user: root
+  tasks:
+    ## configure live environment
+    - include_role:
+        name: change_hostname
+
+    - name: create temporary ansible directory
+      file:
+        state: directory
+        path: "{{ tmpdir0 }}"
+        mode: '0700'
+
+    - name: make a vault directory inside the ansible directory
+      file:
+        path: "{{ tmpdir0 }}/vault"
+        state: directory
+        mode: '0700'
+
+    - name: create the sys_mount mount point
+      file:
+        path: "{{ sys_mount }}"
+        state: directory
+        mode: '0760'
+
+    # partition
+    - include_role:
+        name: partition_efi
+      when: use_efi
+
+    - include_role:
+        name: partition_bios
+      when: not use_efi
+
+    ## encrypt
+    - block:
+      # for interactive use
+      - name: transfer passphrase file
+        copy:
+          src: "./vault/{{ luks_passphrase }}"
+          dest: "{{ tmpdir0 }}/vault"
+          mode: '0600'
+          decrypt: yes
+      # to be embedded in the initramfs
+      - name: transfer keyfile
+        copy:
+          src: "./vault/{{ luks_keyfile }}"
+          dest: "{{ tmpdir0 }}/vault"
+          mode: '0600'
+          decrypt: yes
+
+      - include_role:
+          name: setup_LUKS
+        vars:
+          device: "{{ system_part }}"
+          passphrase: "{{ tmpdir0 }}/vault/{{ luks_passphrase }}"
+          keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
+
+      - name: open encrypted system partition
+        luks_device:
+          keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
+          name: "{{ luks_syspart_name }}"
+          device: "{{ system_part }}"
+          state: opened
+
+    ### create filesystems
+    # btrfs on system partition and mount it
+    - include_tasks: roles/btrfs_layout_flat/create.yml
+      vars:
+        device: "/dev/mapper/{{ luks_syspart_name }}"
+        mountpoint: "{{ sys_mount }}"
+        tmpdir: "{{ tmpdir0 }}"
+    - include_tasks: roles/btrfs_layout_flat/mount.yml
+      vars:
+        device: "/dev/mapper/{{ luks_syspart_name }}"
+        mountpoint: "{{ sys_mount }}"
+        tmpdir: "{{ tmpdir0 }}"
+
+    - name: mark swap partition
+      command: mkswap {{ swap_part }}
+
+    ## bootstrap arch
+    - name: bootstrap arch linux
+      command: pacstrap {{ sys_mount }} base linux linux-firmware grub btrfs-progs nano
+
+    - name: install efibootmgr
+      command: pacstrap {{ sys_mount }} efibootmgr
+      when: use_efi
+
+    ## configure base system
+    - include_role:
+        name: configure_base_system
+
+    - name: set fstab to partiton layout
+      template:
+        src: roles/btrfs_layout_flat/templates/etc/fstab-swappart.j2
+        dest: "{{ sys_mount }}/etc/fstab"
+        force: yes
+      when: not use_swapfile
+
+    # not implemented
+    - name: set fstab to partiton layout
+      template:
+        src: roles/btrfs_layout_flat/templates/etc/fstab-swapfile.j2
+        dest: "{{ sys_mount }}/etc/fstab"
+        force: yes
+      when: use_swapfile
+
+    - name: set crypttab for encrypted swap
+      template:
+        src: templates/archlinux/etc/crypttab.j2
+        dest: "{{ sys_mount }}/etc/crypttab"
+        force: yes
+      when: not use_swapfile
+
+    ## install software in chroot
+    - block:
+      - name: update chroot
+        command: "arch-chroot {{ sys_mount }} {{ env }} {{ pkg_update }}"
+      - name: install network manager
+        command: "arch-chroot {{ sys_mount }} {{ env }} {{ pkg_install }} networkmanager networkmanager-openconnect networkmanager-openvpn networkmanager-vpnc nm-connection-editor network-manager-applet"
+      - name: install openssh
+        command: "arch-chroot {{ sys_mount }} {{ env }} {{ pkg_install }} openssh"
+      - name: install git
+        command: "arch-chroot {{ sys_mount }} {{ env }} {{ pkg_install }} git"
+      - name: install ansible
+        command: "arch-chroot {{ sys_mount }} {{ env }} {{ pkg_install }} ansible"
+
+    ## configure essential services
+    # ssh
+    - name: copy authorized_keys to system
+      copy:
+        src: "{{ authorized_keys_file }}"
+        dest: "{{ sys_mount }}/root/.ssh/authorized_keys"
+        force: yes
+
+    ## enable service
+    - name: enable NetworkManager
+      command: "arch-chroot {{ sys_mount }} {{ env }} systemctl enable NetworkManager.service"
+
+    - name: enable ssh daemon
+      command: "arch-chroot {{ sys_mount }} {{ env }} systemctl enable sshd.service"
+
+    ## configure bootloader
+    - name: save keyfile to /
+      copy:
+        src: "./vault/{{ luks_keyfile }}"
+        dest: "{{ sys_mount }}/crypto_keyfile.bin"
+        mode: '0600'
+        decrypt: yes
+        force: yes
+
+    - include_role:
+        name: bootloader_efi
+      when: use_efi
+
+    - include_role:
+        name: bootloader_bios
+      when: not use_efi
+
+    ## end
+    - include_tasks: roles/btrfs_layout_flat/unmount.yml
+      vars:
+        mountpoint: "{{ sys_mount }}"
