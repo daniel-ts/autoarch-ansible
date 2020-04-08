@@ -1,0 +1,18 @@
+# file AutoarchSystemConfig.yml
+# configures all archlinux non-essential system level serices
+
+- hosts: arch_desktops
+  user: root
+  tasks:
+    ## configure live environment
+    #- include_role:
+      - name: hallo
+        debug:
+          msg: "hallo"
+
+      # automounts
+      # laptop clickpad
+      # hibernation button for shutdown
+      # maybe energy conservation
+      # hardening
+      # ... arch post install recommendations

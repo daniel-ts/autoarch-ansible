@@ -1,0 +1,9 @@
+# file: AutoarchDesktop.yml
+# Playbook to setup an xorg desktop
+
+- hosts: arch_desktops
+  user: root
+  tasks:
+    ## configure live environment
+    - include_role:
+        name: change_hostname
