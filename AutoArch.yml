@@ -1,4 +1,4 @@
-# file: TestPlay.yml
+# file: AutoArch.yml
 ---
 - hosts: arch_desktops
   user: root
