@@ -28,6 +28,12 @@
     dest: "{{ sys_mount }}/etc/vconsole.conf"
     force: yes
 
+- name: copy /etc/hostname
+  template:
+    src: etc/hostname.j2
+    dest: "{{ sys_mount }}/etc/hostname"
+    force: yes
+
 - name: create /etc/hosts
   template:
     src: etc/hosts.j2
