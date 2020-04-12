@@ -29,4 +29,10 @@ rootpw: "$6$sercetsalt$HhihtEXfpW..9m3NjqjDYgmL7wi9m/sH7gjuefoNiK7hy7ajWZ06BAVdp
 pkg_update: "pacman -Syuq --noconfirm --noprogressbar"
 pkg_install: "pacman -Sq --noconfirm --noprogressbar --needed"
 
+# microcode package: use 'amd-ucode' or 'intel-ucode', depending on the processor
+microcode: 'intel-ucode'
+
 authorized_keys_file: "files/wife/ssh/authorized_keys"
+
+admin_user: dandy
+admin_pw: "$6$sercetsalt$P1DyY7WQAdVeTW1gKOybWwHgMUTffJPfn5Aim1DhlUWjojv9ArMJOJGRl0wmav0DI.j9PNN/6j5g.AYTz3okz."

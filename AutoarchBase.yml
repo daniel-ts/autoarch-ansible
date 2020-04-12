@@ -129,6 +129,8 @@
         command: "arch-chroot {{ sys_mount }} {{ env }} {{ pkg_install }} git"
       - name: install ansible
         command: "arch-chroot {{ sys_mount }} {{ env }} {{ pkg_install }} ansible"
+      - name: install microcode update
+        command: "arch-chroot {{ sys_mount }} {{ env }} {{ pkg_install }} {{ microcode }}"
 
     ## configure essential services
     # ssh
