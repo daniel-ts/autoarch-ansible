@@ -1,0 +1,12 @@
+# file: sudoers/tasks/main.yml
+# allows wheel group to use sudo
+---
+
+- name: set /etc/sudoers
+  copy:
+    src: etc/sudoers
+    dest: /etc/sudoers
+    force: yes
+    mode: '0440'
+    owner: root
+    group: root

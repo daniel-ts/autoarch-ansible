@@ -4,6 +4,11 @@
 - hosts: arch_desktops
   user: root
   tasks:
+    ## services
+    - name: update package cache and upgrade system (pacman -Syu)
+      pacman:
+        update_cache: yes
+        upgrade: yes
     # firewall
     - include_role:
         name: archpkg_firewall_desktop
@@ -18,3 +23,26 @@
     # systemd-logind.conf: simple acpi power management and more
     - include_role:
         name: logind_haltonhiber
+
+    - name: install zsh
+      pacman:
+        name: "extra/zsh"
+        state: present
+
+    ## users and privileges
+    - name: create main user with admin privileges
+      user:
+        name: "{{ admin_user }}"
+        state: present
+        shell: /bin/zsh
+        create_home: yes
+        groups: sys,log,games,network,rfkill,systemd-journal,uucp,wheel,adm,dandy
+        group: dandy
+
+    - name: set main user password
+      shell: |
+        echo -n '{{ admin_user }}:{{ admin_pw }}'  | chpasswd --encrypted
+
+    # members of the wheel group may use sudo with their own pw
+    - include_role:
+        name: sudoers_wheel
