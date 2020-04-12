@@ -139,6 +139,8 @@
         src: "{{ authorized_keys_file }}"
         dest: "{{ sys_mount }}/root/.ssh/authorized_keys"
         force: yes
+        mode: '0600'
+        directory_mode: '0600'
 
     ## enable service
     - name: enable NetworkManager
