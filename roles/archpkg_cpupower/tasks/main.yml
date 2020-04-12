@@ -1,0 +1,22 @@
+# file: archpkg_cpupower/tasks/main.yml
+# installs and configures cpupower package for cpu frequency scaling
+---
+
+- name: install cpupwoer
+  pacman:
+    name: cpupower
+    state: present
+
+# no need to load intel_pstate kernel module, because on arch it is compiled in
+
+- name: configure cpupower
+  copy:
+    src: etc/default/cpupower
+    dest: /etc/default/cpupower
+    force: yes
+
+- name: enable and start cpupower.service via systemd
+  systemd:
+    name: cpupower.service
+    enabled: true
+    state: started

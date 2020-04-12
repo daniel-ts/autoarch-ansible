@@ -1,0 +1,10 @@
+# file: archpkg_chrony/tasks/main.yml
+# installs and configures chrony, a better ntp client for mobile devices
+---
+
+- name: install chrony
+  # pacman:
+  #   name: chrony
+  #   state: present
+  debug:
+    msg: "not implemented yet"

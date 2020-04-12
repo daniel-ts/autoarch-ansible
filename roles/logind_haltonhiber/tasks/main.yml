@@ -1,0 +1,17 @@
+# file: logind_haltonhiber/tasks/main.yml
+# set systemd logind configuration
+---
+
+- name: copy preferred logind.conf
+  copy:
+    src: etc/systemd/logind.conf
+    dest: /etc/systemd/logind.conf
+    mode: '0644'
+    force: yes
+
+- name: reload systemd-logind
+  systemd:
+    name: "systemd-logind.service"
+    daemon_reload: yes
+    enabled: yes
+    state: started

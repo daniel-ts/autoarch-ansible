@@ -27,7 +27,7 @@ Sie soll Archlinux auf der Systempartition installieren.
 ** Post installation
 *** System
 **** DONE Firewall
-**** TODO Laptop Power Saving
+**** DONE Laptop Power Saving
 cpupower package
 **** TODO Chrony für ntp
 **** TODO hibernation button for shutdown

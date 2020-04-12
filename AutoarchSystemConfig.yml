@@ -4,5 +4,17 @@
 - hosts: arch_desktops
   user: root
   tasks:
+    # firewall
     - include_role:
         name: archpkg_firewall_desktop
+    # cpu frequency scaling
+    - include_role:
+        name: archpkg_cpupower
+      when: is_mobile
+    # NTP daemon
+    - include_role:
+        name: archpkg_chrony
+      when: is_mobile
+    # systemd-logind.conf: simple acpi power management and more
+    - include_role:
+        name: logind_haltonhiber
