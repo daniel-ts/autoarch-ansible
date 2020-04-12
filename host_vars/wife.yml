@@ -1,6 +1,8 @@
 use_efi: no
 use_swapfile: no
 use_LUKS: yes
+is_mobile: yes
+has_clickpad: yes
 
 grub_device: /dev/sda
 

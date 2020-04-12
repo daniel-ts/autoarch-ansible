@@ -2,7 +2,7 @@
 #+AUTHOR: Daniel Tschertkow <daniel.tschertkow@posteo.de>
 
 * TODOs
-** TODO git repo initiieren
+** DONE git repo initiieren
 ** DONE Von dem Plan abweichen für die System-Partition ein LUKS-Keyfile (... nicht Ansible Keyfile) zu benutzen
 ** DONE Wo sollte man die Swapfile platzieren?
 Auf ein eigenes btrfs subvolume, was nicht gesnapshotted wird, also z.B. /var/@swapfile
@@ -11,14 +11,11 @@ und einhängen unter /
 ** DONE Swap partition hinzufügen
 ** DONE Ein copy von vault Dateien entschlüsselt sie. Ändern!
 versuche es mit der =decrypt: no= Option des =copy= Moduls
-** TODO Das ganze Skript idempotent machen. Wäre schwer, aber geil
+** DONE Das ganze Skript idempotent machen. Wäre schwer, aber geil
 ** DONE grub config: dmname setzen
 siehe https://wiki.archlinux.org/index.php/Dm-crypt/System_configuration#Using_encrypt_hook
 
-** TODO verbleibende Dinge nach Installation
-*** TODO bootloader installieren
-*** TODO
-** TODO bootstrap_archlinux roles schreiben
+** DONE bootstrap_archlinux roles schreiben
 Sie soll Archlinux auf der Systempartition installieren.
 *** Pre condtitions
 - eine live Umgebung ist eingerichtet
@@ -27,8 +24,18 @@ Sie soll Archlinux auf der Systempartition installieren.
 *** Post condition
 - arch ist auf der Systempartition installiert, aber es befindet sich kein Bootloader drauf
 - das System weicht in keiner Weise von der absoluten Standardinstallation ab
+** Post installation
+*** System
+**** TODO Firewall
+**** TODO Laptop Power Saving
+cpupower package
+**** TODO Chrony für ntp
+**** TODO hibernation button for shutdown
+**** TODO automounts?
 
-
+*** Desktop
+**** TODO xorg
+***** TODO Touchpad
 * Notizen
 ** LUKS
 *** Was ist ein LUKS Keyfile?
@@ -274,3 +281,13 @@ Dieses Skript bestimmt die Erstellung des Initramfs Images, welches den Kernel u
 =encrypt= Hook setzen und /usr/bin/btrfs als Binary hinzufügen.
 
 **** crypttab zum Verschlüsseln von Swap erstellen.
+
+*** Sollte ich eine zentrale Stelle für Software haben, oder eher nach Programm Installation und Konfiguration verbinden?
+| zentral                     | install+config                                      |
+|-----------------------------+-----------------------------------------------------|
+| + zentrale Stelle für alles | + Installation und Konfiguration ist verknüpft,     |
+| - Konfig ohne dass Software | so auch im Code, zentrale Stelle immer noch möglich |
+|   installiert ist           |                                                     |
+
+→ install+config.
+Präfix wird sein: archpkg_

@@ -1,4 +1,6 @@
 # file: AutoArch.yml
+# Playbook for installing a basic arch system
+# with NetworkManager and sshd running.
 ---
 - hosts: arch_desktops
   user: root
@@ -127,6 +129,21 @@
         command: "arch-chroot {{ sys_mount }} {{ env }} {{ pkg_install }} git"
       - name: install ansible
         command: "arch-chroot {{ sys_mount }} {{ env }} {{ pkg_install }} ansible"
+
+    ## configure essential services
+    # ssh
+    - name: copy authorized_keys to system
+      copy:
+        src: "{{ authorized_keys_file }}"
+        dest: "{{ sys_mount }}/root/.ssh/authorized_keys"
+        force: yes
+
+    ## enable service
+    - name: enable NetworkManager
+      command: "arch-chroot {{ sys_mount }} {{ env }} systemctl enable NetworkManager.service"
+
+    - name: enable ssh daemon
+      command: "arch-chroot {{ sys_mount }} {{ env }} systemctl enable sshd.service"
 
     ## configure bootloader
     - name: save keyfile to /
