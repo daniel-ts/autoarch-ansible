@@ -38,6 +38,7 @@ admin_user: dandy
 admin_pw: "$6$sercetsalt$P1DyY7WQAdVeTW1gKOybWwHgMUTffJPfn5Aim1DhlUWjojv9ArMJOJGRl0wmav0DI.j9PNN/6j5g.AYTz3okz."
 
 github_pk: "vault/wife_github_pk"
+github_conf: "vault/wife_github_conf"
 github_dotfiles_repo: "git@github.com:daniel-ts/config.git"
 
 desktop_video_driver: "xf86-video-intel"

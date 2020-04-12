@@ -13,6 +13,17 @@
         group: "{{ admin_user }}"
         mode: '0700'
 
+    - name: copy git config
+      copy:
+        src: "{{ github_conf }}"
+        dest: "/home/{{ admin_user }}/.ssh/config"
+        force: yes
+        decrypt: yes
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0600'
+        directory_mode: '0700'
+
     - name: copy github private key
       copy:
         src: "{{ github_pk }}"
@@ -21,10 +32,10 @@
         decrypt: yes
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
-        mode: '0700'
+        mode: '0600'
         directory_mode: '0700'
 
-    - name: checkout dotfiles git repo
+    - name: clone dotfiles git repo
       git:
         repo: "{{ github_dotfiles_repo }}"
         dest: "/home/{{ admin_user }}/.cfg"
@@ -37,12 +48,18 @@
       become_user: "{{ admin_user }}"
       become_method: sudo
 
+    - name: checkout dotfiles git repo
+      command: "/usr/bin/git --git-dir=/home/{{ admin_user }}/.cfg --work-tree=/home/{{ admin_user }} checkout"
+      become: yes
+      become_user: "{{ admin_user }}"
+      become_method: sudo
+
     - name: update package cache and upgrade system (pacman -Syu)
       pacman:
         update_cache: yes
         upgrade: yes
 
-    ## drivers
+    # ## drivers
     - name: install video drivers
       pacman:
         name:
@@ -61,6 +78,7 @@
       pacman:
         name:
           - xorg
+          - xorg-xinit
           - "i3-gaps"
           - termite
           - conky
