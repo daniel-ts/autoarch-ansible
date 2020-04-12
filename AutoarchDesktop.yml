@@ -4,6 +4,63 @@
 - hosts: arch_desktops
   user: root
   tasks:
-    ## configure live environment
-    - include_role:
-        name: change_hostname
+    ## preparation
+    - name: create .ssh directory
+      file:
+        state: directory
+        path: "/home/{{ admin_user }}/.ssh"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0600'
+
+    - name: copy github private key
+      copy:
+        src: "{{ github_pk }}"
+        dest: "/home/{{ admin_user }}/.ssh/github"
+        force: yes
+        decrypt: yes
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0600'
+        directory_mode: '0600'
+
+    - name: checkout dotfiles git repo
+      git:
+        repo: "{{ github_dotfiles_repo }}"
+        dest: "/home/{{ admin_user }}/.cfg"
+        clone: yes
+        key_file: "/home/{{ admin_user }}/.ssh/github"
+        force: yes
+        bare: yes
+        accept_hostkey: yes
+
+    - name: update package cache and upgrade system (pacman -Syu)
+      pacman:
+        update_cache: yes
+        upgrade: yes
+
+    ## drivers
+    - name: install video drivers
+      pacman:
+        name:
+          - "{{ desktop_video_driver }}"
+          - mesa
+        state: present
+
+    - name: install PulseAudio
+      pacman:
+        name:
+          - "extra/pulseaudio"
+          - pulsemixer
+        state: present
+
+    - name: install xorg and graphical environment software
+      pacman:
+        name:
+          - xorg
+          - "i3-gaps"
+          - termite
+          - conky
+          - firefox
+          - dmenu
+          - keepass
