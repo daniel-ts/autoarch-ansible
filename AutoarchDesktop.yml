@@ -11,7 +11,7 @@
         path: "/home/{{ admin_user }}/.ssh"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
-        mode: '0600'
+        mode: '0700'
 
     - name: copy github private key
       copy:
@@ -21,8 +21,8 @@
         decrypt: yes
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
-        mode: '0600'
-        directory_mode: '0600'
+        mode: '0700'
+        directory_mode: '0700'
 
     - name: checkout dotfiles git repo
       git:
@@ -33,6 +33,9 @@
         force: yes
         bare: yes
         accept_hostkey: yes
+      become: yes
+      become_user: "{{ admin_user }}"
+      become_method: sudo
 
     - name: update package cache and upgrade system (pacman -Syu)
       pacman:
