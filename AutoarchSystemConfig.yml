@@ -29,6 +29,11 @@
         name: "extra/zsh"
         state: present
 
+    - name: install fish shell
+      pacman:
+        name: "community/fish"
+        state: present
+
     ## users and privileges
     - name: create main user with admin privileges
       user:
@@ -36,8 +41,7 @@
         state: present
         shell: /bin/zsh
         create_home: yes
-        groups: sys,log,games,network,rfkill,systemd-journal,uucp,wheel,adm,dandy
-        group: dandy
+        groups: sys,log,games,network,rfkill,systemd-journal,uucp,wheel,adm
 
     - name: set main user password
       shell: |
@@ -45,4 +49,4 @@
 
     # members of the wheel group may use sudo with their own pw
     - include_role:
-        name: sudoers_wheel
+        name: sudoers

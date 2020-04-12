@@ -2,6 +2,11 @@
 # allows wheel group to use sudo
 ---
 
+- name: install sudo
+  pacman:
+    name: sudo
+    state: present
+
 - name: set /etc/sudoers
   copy:
     src: etc/sudoers
