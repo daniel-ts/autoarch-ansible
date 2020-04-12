@@ -1,0 +1,32 @@
+# file: archpkg_firewall_desktop/tasks/main.yml
+# installs and configures ferm
+# dependencies: iptables (should be installed by pacman as a dependency), up-to-date package cache
+---
+
+- name: install ferm firewall maintenance tool
+  pacman:
+    name: ferm
+    state: present
+
+- name: make ferm directory
+  file:
+    state: directory
+    path: /etc/ferm/ferm.d
+    mode: '0600'
+
+- name: move ferm config to /etc/ferm
+  copy:
+    src: files/etc/ferm/
+    dest: /etc/ferm
+    owner: root
+    group: root
+    mode: '0600'
+    directory_mode: '0600'
+    force: yes
+
+- name: ferm flush
+  command: ferm --flush /etc/ferm/ferm.conf
+
+# should be indempotent
+- name: run ferm
+  command: ferm /etc/ferm/ferm.conf

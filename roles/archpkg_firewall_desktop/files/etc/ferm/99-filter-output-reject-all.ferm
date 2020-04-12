@@ -1,0 +1,5 @@
+#+ -*- shell-script -*-
+
+# catch-all reject clause. Should be included
+# at the end of a firewall config.
+table filter chain OUTPUT REJECT;

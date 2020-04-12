@@ -26,7 +26,7 @@ Sie soll Archlinux auf der Systempartition installieren.
 - das System weicht in keiner Weise von der absoluten Standardinstallation ab
 ** Post installation
 *** System
-**** TODO Firewall
+**** DONE Firewall
 **** TODO Laptop Power Saving
 cpupower package
 **** TODO Chrony für ntp
