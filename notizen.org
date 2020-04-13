@@ -35,7 +35,20 @@ cpupower package
 
 *** Desktop
 **** TODO xorg
-***** TODO Touchpad
+***** DONE keymap
+***** TODO git hustling in role auslagern
+***** TODO aur building verbessern
+***** TODO i3lock und suspend.target ... oder display manager
+***** DONE Touchpad
+***** TODO dmenu
+***** TODO rofi
+***** TODO compositor: picom-tyrone
+***** TODO polybar
+***** TODO emacs
+***** TODO bspwm
+***** TODO rice
+*** misc
+**** TODO Backups mit snapper
 * Notizen
 ** LUKS
 *** Was ist ein LUKS Keyfile?
