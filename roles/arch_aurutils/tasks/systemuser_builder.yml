@@ -26,7 +26,7 @@
 
 - name: give builder pacman privileges
   copy:
-    src: etc/sudoers.d/10_builder
-    dest: /etc/sudoers.d/10_builder
+    src: "etc/sudoers.d/10_builder"
+    dest: "/etc/sudoers.d/10_builder"
     force: yes
     mode: '0600'

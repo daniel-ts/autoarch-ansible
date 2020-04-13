@@ -1,1 +1,2 @@
+# builder may use pacman for dependency resolution
 builder ALL = (root) NOPASSWD: /usr/bin/pacman

@@ -3,15 +3,17 @@
 
 - hosts: arch_desktops
   user: root
+  vars:
+    pac_args: "--noconfirm --quiet --noprogressbar"
   tasks:
     ## services and programs
     - name: update package cache and upgrade system (pacman -Syu)
       pacman:
         update_cache: yes
         upgrade: yes
-        update_cache_extra_args: "--noconfirm"
-        upgrade_extra_args: "--noconfirm"
-        extra_args: "--noconfirm"
+        update_cache_extra_args: "{{ pac_args }}"
+        upgrade_extra_args: "{{ pac_args }}"
+        extra_args: "{{ pac_args }}"
     # firewall
     - include_role:
         name: archpkg_firewall_desktop
@@ -31,13 +33,13 @@
       pacman:
         name: "extra/zsh"
         state: present
-        extra_args: "--noconfirm"
+        extra_args: "{{ pac_args }}"
 
     - name: install fish shell
       pacman:
         name: "community/fish"
         state: present
-        extra_args: "--noconfirm"
+        extra_args: "{{ pac_args }}"
 
     ## users and privileges
 
@@ -72,7 +74,4 @@
 
     # finally
     - name: install various tools and depenencies
-      pacman:
-        name:
-          - devtools
-          - base-devel
+      command: "pacman {{ pac_args }} -S devtools base-devel htop tree"
