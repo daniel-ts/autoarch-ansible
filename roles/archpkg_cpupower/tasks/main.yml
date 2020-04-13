@@ -6,6 +6,7 @@
   pacman:
     name: cpupower
     state: present
+    extra_args: "--noconfirm"
 
 # no need to load intel_pstate kernel module, because on arch it is compiled in
 

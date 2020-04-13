@@ -31,7 +31,10 @@
         name:
           - "{{ desktop_video_driver }}"
           - mesa
+          - xf86-video-fbdev
+          - xf86-video-vesa
         state: present
+        extra_args: "--noconfirm"
 
     - name: install PulseAudio
       pacman:
@@ -39,6 +42,7 @@
           - "extra/pulseaudio"
           - pulsemixer
         state: present
+        extra_args: "--noconfirm"
 
     ## software
     - name: install xorg and graphical environment software
@@ -52,6 +56,8 @@
           - firefox
           - dmenu
           - keepass
+        state: present
+        extra_args: "--noconfirm"
 
     ## input configuration
     - include_role:

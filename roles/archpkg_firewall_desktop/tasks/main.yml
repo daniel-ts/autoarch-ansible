@@ -7,6 +7,7 @@
   pacman:
     name: ferm
     state: present
+    extra_args: "--noconfirm"
 
 - name: make ferm directory
   file:

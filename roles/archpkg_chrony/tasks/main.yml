@@ -6,5 +6,7 @@
   # pacman:
   #   name: chrony
   #   state: present
+  #   extra_args: "--noconfirm"
+
   debug:
     msg: "not implemented yet"
