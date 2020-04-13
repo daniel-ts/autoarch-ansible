@@ -46,15 +46,15 @@
 - name: create /@/.snapshots
   file: state=directory path="{{ mountpoint }}/@/.snapshots"
 
-- name: create /@/var/cache/pacman
-  file: state=directory path="{{ mountpoint }}/@/var/cache/pacman"
+- name: create /@/var/cache
+  file: state=directory path="{{ mountpoint }}/@/var/cache"
 
 - name: create /@/home
   file: state=directory path="{{ mountpoint }}/@/home"
 
 # subvolumes as directories, which are not directly under root so not to be snapshotted
 - name: create the btrfs pacman cache subvolume
-  command: btrfs subvolume create {{ mountpoint }}/@/var/cache/pacman/pkg
+  command: btrfs subvolume create {{ mountpoint }}/@/var/cache/pacman
   register: result
   failed_when: result.rc not in [0, 1]
   changed_when: result.rc == 0
