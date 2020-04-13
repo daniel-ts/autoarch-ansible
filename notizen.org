@@ -36,7 +36,7 @@ cpupower package
 *** Desktop
 **** TODO xorg
 ***** DONE keymap
-***** TODO git hustling in role auslagern
+***** DONE git hustling in role auslagern
 ***** TODO aur building verbessern
 ***** TODO i3lock und suspend.target ... oder display manager
 ***** DONE Touchpad

@@ -16,6 +16,10 @@
     - include_role:
         name: conf_user_git
 
+    - include_role:
+        name: archpkg_local_aurutils
+
+
     - name: update package cache and upgrade system (pacman -Syu)
       pacman:
         update_cache: yes
