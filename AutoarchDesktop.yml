@@ -3,6 +3,8 @@
 
 - hosts: arch_desktops
   user: root
+  vars:
+    aur_sync: "sudo -u builder aur sync -c --noview --noconfirm -d custom"
   tasks:
     ## preparation
     - name: create .ssh directory
@@ -31,7 +33,6 @@
         name:
           - "{{ desktop_video_driver }}"
           - mesa
-          - xf86-video-fbdev
           - xf86-video-vesa
         state: present
         extra_args: "--noconfirm"
@@ -54,10 +55,21 @@
           - termite
           - conky
           - firefox
-          - dmenu
           - keepass
+          - feh
+          - mpd
+          - vlc
+          - nitrogen
         state: present
         extra_args: "--noconfirm"
+
+    # special software form the AUR
+    - name: install AUR software
+      block:
+        - command: "{{ aur_sync }} polybar"
+        - command: "{{ aur_sync }} picom-tryone-git"
+        - pacman: name="custom/polybar"
+        - pacman: name="custom/picom-tryone-git"
 
     ## input configuration
     - include_role:
