@@ -1,0 +1,32 @@
+# file: arch_builder_user
+# creates a system user for building aur packages with elevated privilges to use pacman
+---
+
+- name: create builder user
+  user:
+    name: builder
+    state: present
+    shell: /sbin/nologin
+    create_home: yes
+    home: /var/cache/pacman/builder
+    system: yes
+
+- name: set permissions on builder's home dir
+  file:
+    path: /var/cache/pacman/builder
+    mode: '0755'
+
+- name: ensure sudoers.d is present
+  file:
+    path: /etc/sudoers.d
+    state: directory
+    mode: '0700'
+    owner: root
+    group: root
+
+- name: give builder pacman privileges
+  copy:
+    src: etc/sudoers.d/10_builder
+    dest: /etc/sudoers.d/10_builder
+    force: yes
+    mode: '0600'

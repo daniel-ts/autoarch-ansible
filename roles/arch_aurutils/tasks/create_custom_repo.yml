@@ -10,19 +10,8 @@
     mode: '0644'
     force: yes
 
-- name: create local cache directory
-  file:
-    path: /var/cache/pacman/custom
-    state: directory
-    force: yes
-    mode: '0644'
-
-- name: create the repo directory
-  file:
-    path: /var/local/custompkgs
-    state: directory
-    force: yes
-    mode: '0644'
-
 - name: create the repo database
-  command: repo-add /var/local/custompkgs/custom.db.tar.gz
+  command: repo-add /var/cache/pacman/builder/custom.db.tar.xz
+  become: yes
+  become_user: builder
+  become_method: sudo

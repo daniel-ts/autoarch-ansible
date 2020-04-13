@@ -9,6 +9,9 @@
       pacman:
         update_cache: yes
         upgrade: yes
+        update_cache_extra_args: "--noconfirm"
+        upgrade_extra_args: "--noconfirm"
+        extra_args: "--noconfirm"
     # firewall
     - include_role:
         name: archpkg_firewall_desktop
@@ -28,32 +31,48 @@
       pacman:
         name: "extra/zsh"
         state: present
+        extra_args: "--noconfirm"
 
     - name: install fish shell
       pacman:
         name: "community/fish"
         state: present
+        extra_args: "--noconfirm"
 
     ## users and privileges
+
+    # members of the wheel group may use sudo with their own pw
+    - include_role:
+        name: sudoers
+
     - name: create main user with admin privileges
       user:
         name: "{{ admin_user }}"
         state: present
         shell: /bin/zsh
         create_home: yes
+        home: "/home/{{ admin_user }}"
         groups: sys,log,games,network,rfkill,systemd-journal,uucp,wheel,adm
 
     - name: set main user password
       shell: |
         echo -n '{{ admin_user }}:{{ admin_pw }}'  | chpasswd --encrypted
 
-    # members of the wheel group may use sudo with their own pw
-    - include_role:
-        name: sudoers
+    # why must I do this?
+    - name: change ownership of admin_user home to the user
+      file:
+        path: "/home/{{ admin_user }}"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0740'
 
     # arch user repository
     - include_role:
-        name: archpkg_local_aurutils
+        name: arch_aurutils
 
-    - include_role:
-        name: arch_aurutils_repo
+    # finally
+    - name: install various tools and depenencies
+      pacman:
+        name:
+          - devtools
+          - base-devel

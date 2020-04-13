@@ -1,0 +1,6 @@
+# file: arch_aurutils/tasks/main.yml
+# installs and configures aurutils helper, a 'custom' repo and a dedicated system user 'builder', who fetches AUR packages, builds them and publishes them to the local 'custom' repo.
+---
+- include_tasks: install_aurutils
+- include_tasks: systemuser_builder.yml
+- include_tasks: create_custom_repo.yml

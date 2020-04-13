@@ -1,0 +1,20 @@
+# file: archpkg_local_aurutils/tasks/main.yml
+# installs aurutils (package manager for the AUR) from a local package
+---
+
+- name: copy aurutils package to /root directory
+  copy:
+    src: "aurutils-2.3.3-1-any.pkg.tar.xz"
+    dest: "/root/"
+
+
+- name: install aurutils package
+  pacman:
+    name:
+      - diffstat
+      - expac
+      - pacutils
+      - parallel
+      - "/root/aurutils-2.3.3-1-any.pkg.tar.xz"
+    state: present
+    extra_args: "--noconfirm"
