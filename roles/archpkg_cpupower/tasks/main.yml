@@ -20,3 +20,4 @@
     name: cpupower.service
     enabled: true
     state: started
+  ignore_errors: yes

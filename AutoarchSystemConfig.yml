@@ -34,13 +34,6 @@
         name: "community/fish"
         state: present
 
-    # arch user repository
-    - include_role:
-        name: archpkg_local_aurutils
-
-    - include_role:
-        name: arch_aurutils_repo
-
     ## users and privileges
     - name: create main user with admin privileges
       user:
@@ -57,3 +50,10 @@
     # members of the wheel group may use sudo with their own pw
     - include_role:
         name: sudoers
+
+    # arch user repository
+    - include_role:
+        name: archpkg_local_aurutils
+
+    - include_role:
+        name: arch_aurutils_repo
