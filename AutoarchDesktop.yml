@@ -13,46 +13,8 @@
         group: "{{ admin_user }}"
         mode: '0700'
 
-    - name: copy git config
-      copy:
-        src: "{{ github_conf }}"
-        dest: "/home/{{ admin_user }}/.ssh/config"
-        force: yes
-        decrypt: yes
-        owner: "{{ admin_user }}"
-        group: "{{ admin_user }}"
-        mode: '0600'
-        directory_mode: '0700'
-
-    - name: copy github private key
-      copy:
-        src: "{{ github_pk }}"
-        dest: "/home/{{ admin_user }}/.ssh/github"
-        force: yes
-        decrypt: yes
-        owner: "{{ admin_user }}"
-        group: "{{ admin_user }}"
-        mode: '0600'
-        directory_mode: '0700'
-
-    - name: clone dotfiles git repo
-      git:
-        repo: "{{ github_dotfiles_repo }}"
-        dest: "/home/{{ admin_user }}/.cfg"
-        clone: yes
-        key_file: "/home/{{ admin_user }}/.ssh/github"
-        force: yes
-        bare: yes
-        accept_hostkey: yes
-      become: yes
-      become_user: "{{ admin_user }}"
-      become_method: sudo
-
-    - name: checkout dotfiles git repo
-      command: "/usr/bin/git --git-dir=/home/{{ admin_user }}/.cfg --work-tree=/home/{{ admin_user }} checkout"
-      become: yes
-      become_user: "{{ admin_user }}"
-      become_method: sudo
+    - include_role:
+        name: conf_user_git
 
     - name: update package cache and upgrade system (pacman -Syu)
       pacman:
@@ -74,6 +36,7 @@
           - pulsemixer
         state: present
 
+    ## software
     - name: install xorg and graphical environment software
       pacman:
         name:
@@ -85,3 +48,7 @@
           - firefox
           - dmenu
           - keepass
+
+    ## input configuration
+    - include_role:
+        name: input_dev_conf

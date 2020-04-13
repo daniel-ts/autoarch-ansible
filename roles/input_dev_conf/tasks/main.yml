@@ -1,0 +1,12 @@
+# file: input_dev_conf/tasks/main.yml
+# copies X11 config files to the appropriate directory
+---
+
+- name: copy xorg conf files to /etc/X11/xorg.conf.d/
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/X11/xorg.conf.d/"
+    owner: root
+    mode: '0644'
+  with_fileglob:
+    - "files/etc/X11/xorg.conf.d/*"
