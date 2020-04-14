@@ -30,25 +30,33 @@ Sie soll Archlinux auf der Systempartition installieren.
 **** DONE Laptop Power Saving
 cpupower package
 **** TODO Chrony für ntp
-**** TODO hibernation button for shutdown
+**** DONE hibernation button for shutdown
 **** TODO automounts?
 
 *** Desktop
 **** TODO xorg
 ***** DONE keymap
 ***** DONE git hustling in role auslagern
-***** TODO aur building verbessern
-***** TODO i3lock und suspend.target ... oder display manager
+***** DONE aur building verbessern
+***** DONE i3lock und suspend.target ... oder display manager
 ***** DONE Touchpad
-***** TODO dmenu
-***** TODO rofi
-***** TODO compositor: picom-tyrone
-***** TODO polybar
+***** DONE dmenu
+***** DONE rofi
+***** DONE compositor: picom-tyrone
+***** DONE polybar
 ***** TODO emacs
 ***** TODO bspwm
 ***** TODO rice
 *** misc
 **** TODO Backups mit snapper
+** Aufräumen
+so wie es aktuell ist, kann ich Arch nur auf remote Hosts installieren, aber nicht von einer Archiso auf das lokale System. Gründe dafür sind:
+*** TODO GPG Verschlüsselung des Vault Passworts
+Damit ich das PW nicht dauernd eingeben muss, ist es in einer vault-password-file und per GPG verschlüsselt. Den GPG Schlüssel habe ich auf einer Archiso nicht, daher muss das durch ein menschenschreibbares Passwort ersetzt werden.
+*** TODO Vault Dateien werden versioniert
+... und landen auf Github. Die sollten entfernt werden.
+*** TODO host_vars aufräumen
+*** TODO allgemeine Refaktorisierung und Pflege
 * Notizen
 ** LUKS
 *** Was ist ein LUKS Keyfile?
