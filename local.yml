@@ -4,6 +4,7 @@
 ---
 
 - user:  root
+  hosts: local
   tasks:
     - name: test
       debug:

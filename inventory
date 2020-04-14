@@ -2,3 +2,6 @@ wife ip_address=127.0.0.1
 
 [arch_desktops]
 wife
+
+[local]
+127.0.0.1
