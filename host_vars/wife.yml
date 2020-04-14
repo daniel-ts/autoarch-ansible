@@ -15,13 +15,11 @@ swap_part: /dev/sda1
 system_part: /dev/sda2
 
 # size in MiB
-#efi_size: 256
-#swap_size: 8192
-efi_size: 128
-swap_size: 128
+efi_size: 256
+swap_size: 8192
 
-luks_passphrase: wife_passphrase
-luks_keyfile: wife_crypto_keyfile.bin
+luks_passphrase: "vault/hosts/wife/wife_passphrase"
+luks_keyfile: "vault/hosts/wife/wife_crypto_keyfile.bin"
 luks_syspart_name: cryptroot
 
 rootpw: "$6$sercetsalt$HhihtEXfpW..9m3NjqjDYgmL7wi9m/sH7gjuefoNiK7hy7ajWZ06BAVdpiYIfzWBuiusknv1DydviBY28vyFd."
@@ -37,8 +35,6 @@ authorized_keys_file: "files/wife/ssh/authorized_keys"
 admin_user: dandy
 admin_pw: "$6$sercetsalt$P1DyY7WQAdVeTW1gKOybWwHgMUTffJPfn5Aim1DhlUWjojv9ArMJOJGRl0wmav0DI.j9PNN/6j5g.AYTz3okz."
 
-github_pk: "vault/wife_github_pk"
-github_conf: "vault/wife_github_conf"
-github_dotfiles_repo: "git@github.com:daniel-ts/config.git"
+github_dotfiles_repo: "https://github.com/daniel-ts/config.git"
 
 desktop_video_driver: "xf86-video-intel"

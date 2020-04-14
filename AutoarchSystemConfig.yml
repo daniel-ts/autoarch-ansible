@@ -53,6 +53,7 @@
         state: present
         shell: /bin/zsh
         create_home: yes
+        skeleten: "/dev/null"
         home: "/home/{{ admin_user }}"
         groups: sys,log,games,network,rfkill,systemd-journal,uucp,wheel,adm
 

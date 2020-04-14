@@ -17,6 +17,9 @@
         mode: '0700'
 
     - include_role:
+        name: setup_dotssh
+
+    - include_role:
         name: conf_user_git
 
     - name: update package cache and upgrade system (pacman -Syu)

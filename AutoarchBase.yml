@@ -41,14 +41,14 @@
       # for interactive use
       - name: transfer passphrase file
         copy:
-          src: "./vault/{{ luks_passphrase }}"
+          src: "{{ luks_passphrase }}"
           dest: "{{ tmpdir0 }}/vault"
           mode: '0600'
           decrypt: yes
       # to be embedded in the initramfs
       - name: transfer keyfile
         copy:
-          src: "./vault/{{ luks_keyfile }}"
+          src: "{{ luks_keyfile }}"
           dest: "{{ tmpdir0 }}/vault"
           mode: '0600'
           decrypt: yes
@@ -158,7 +158,7 @@
     ## configure bootloader
     - name: save keyfile to /
       copy:
-        src: "./vault/{{ luks_keyfile }}"
+        src: "{{ luks_keyfile }}"
         dest: "{{ sys_mount }}/crypto_keyfile.bin"
         mode: '0600'
         decrypt: yes

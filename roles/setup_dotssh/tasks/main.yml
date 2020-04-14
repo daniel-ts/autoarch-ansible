@@ -1,0 +1,28 @@
+# file: setup_dotssh/tasks/main.yml
+# expects a vaulted tar archive of the *contents* of the .ssh folder to exist. Unpacks it into the specified directory.
+# variables:
+#  dotssh_dir: path to the (encrypted) .ssh archive on the master
+#  unpack_dir: path to the unpack directory
+#  owner: owning user
+#  group: owning group
+---
+
+- name: ensure \'{{ unpack_dir }}\' exists
+  file:
+    path: "{{ unpack_dir }}"
+    state: directory
+    mode: '0700'
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+
+- name: copy dotssh archive to \'{{ unpack_dir }}\'
+  copy:
+    src: "{{ item }}"
+    dest: "{{ unpack_dir }}"
+    force: yes
+    decrypt: yes
+    mode: '0600'
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+  with_fileglob:
+    - "{{ dotssh_dir }}/*"

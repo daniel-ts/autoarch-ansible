@@ -3,7 +3,7 @@
 ---
 - name: transfer keyfile
   copy:
-    src: "./vault/{{ luks_keyfile }}"
+    src: "{{ luks_keyfile }}"
     dest: "{{ tmpdir0 }}/vault"
     mode: '0700'
     decrypt: yes
