@@ -8,65 +8,70 @@
     pac_args: "--noconfirm --quiet --noprogressbar"
   tasks:
     ## preparation
-    # - name: create .ssh directory
-    #   file:
-    #     state: directory
-    #     path: "/home/{{ admin_user }}/.ssh"
-    #     owner: "{{ admin_user }}"
-    #     group: "{{ admin_user }}"
-    #     mode: '0700'
+    - name: create .ssh directory
+      file:
+        state: directory
+        path: "/home/{{ admin_user }}/.ssh"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: '0700'
 
-    # - include_role:
-    #     name: conf_user_git
+    - include_role:
+        name: conf_user_git
 
-    # - name: update package cache and upgrade system (pacman -Syu)
-    #   pacman:
-    #     update_cache: yes
-    #     upgrade: yes
-    #     extra_args: "{{ pac_args }}"
+    - name: update package cache and upgrade system (pacman -Syu)
+      pacman:
+        update_cache: yes
+        upgrade: yes
+        extra_args: "{{ pac_args }}"
 
-    # - include_role:
-    #     name: arch_aurutils
+    - include_role:
+        name: arch_aurutils
 
-    # # ## drivers
-    # - name: install video drivers
-    #   pacman:
-    #     name:
-    #       - "{{ desktop_video_driver }}"
-    #       - mesa
-    #       - xf86-video-vesa
-    #     state: present
-    #     extra_args: "{{ pac_args }}"
+    # ## drivers
+    - name: install video drivers
+      pacman:
+        name:
+          - "{{ desktop_video_driver }}"
+          - mesa
+          - xf86-video-vesa
+        state: present
+        extra_args: "{{ pac_args }}"
 
-    # - name: install PulseAudio
-    #   pacman:
-    #     name:
-    #       - "extra/pulseaudio"
-    #       - pulsemixer
-    #     state: present
-    #     extra_args: "{{ pac_args }}"
+    - name: install PulseAudio
+      pacman:
+        name:
+          - "extra/pulseaudio"
+          - pulsemixer
+        state: present
+        extra_args: "{{ pac_args }}"
 
-    # ## software
-    # - name: install xorg and graphical environment software
-    #   pacman:
-    #     name:
-    #       - xorg
-    #       - xorg-xinit
-    #       - "i3-gaps"
-    #       - termite
-    #       - conky
-    #       - firefox
-    #       - keepass
-    #       - feh
-    #       - mpd
-    #       - vlc
-    #       - nitrogen
-    #     state: present
-    #     extra_args: "{{ pac_args }}"
+    ## software
+    - name: install xorg and graphical environment software
+      pacman:
+        name:
+          - xorg
+          - xorg-xinit
+          - "i3-gaps"
+          # - xcompmgr
+          - termite
+          - conky
+          - firefox
+          - keepass
+          - feh
+          - mpd
+          - vlc
+          - nitrogen
+        state: present
+        extra_args: "{{ pac_args }}"
 
     ## input configuration
     - include_role:
         name: input_dev_conf
+
+    ## screenlocking on suspension, installs i3lock-color
+    - include_role:
+        name: i3lock_on_suspend
 
     # special software form the AUR
     - name: install AUR software
@@ -83,10 +88,12 @@
           become_user: builder
           become_method: sudo
 
-        - pacman:
-            name: "custom/polybar"
-            extra_args: "{{ pac_args }}"
+        -name: install polybar
+         pacman:
+           name: "custom/polybar"
+           extra_args: "{{ pac_args }}"
 
-        - pacman:
+        - name: install picom-tryone-git
+          pacman:
             name: "custom/picom-tryone-git"
             extra_args: "{{ pac_args }}"

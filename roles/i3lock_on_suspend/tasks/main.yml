@@ -1,0 +1,21 @@
+# file: i3_lock_on_suspend/tasks/main.yml
+# locks the screen on suspension via systemd suspend.target and sleep.target
+---
+
+- name: install i3lock-color
+  pacman:
+    name: "community/i3lock-color"
+    state: present
+    extra_args: "--noprogressbar --noconfirm --quiet"
+
+- name: copy systemd unit files to /etc/systemd/system
+  copy:
+    src: "etc/systemd/system/sleeplock@.service"
+    dest: "etc/systemd/system/sleeplock@.service"
+    force: yes
+
+- name: activate the systemd service
+  systemd:
+    name: "sleeplock@{{ admin_user }}.service"
+    enabled: yes
+    state: started
