@@ -48,10 +48,10 @@
     - block:
         - include_role:
             name: setup_LUKS
-        vars:
-          device: "{{ system_part }}"
-          # passphrase: "{{ tmpdir0 }}/vault/{{ luks_passphrase }}"
-          # keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
+          vars:
+            device: "{{ system_part }}"
+            # passphrase: "{{ tmpdir0 }}/vault/{{ luks_passphrase }}"
+            # keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
 
       - name: open encrypted system partition
         luks_device:
