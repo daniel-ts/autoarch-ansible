@@ -57,7 +57,7 @@
 
       - name: open encrypted system partition
         luks_device:
-          keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
+          keyfile: "{{ tmpdir0 }}/luks_passphrase"
           name: "{{ luks_syspart_name }}"
           device: "{{ system_part }}"
           state: opened
