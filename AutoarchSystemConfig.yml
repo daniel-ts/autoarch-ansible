@@ -73,6 +73,11 @@
     - include_role:
         name: arch_aurutils
 
+    - name: update package cache
+      pacman:
+        update_cache: yes
+        update_cache_extra_args: "{{ pac_args }}"
+
     # finally
     - name: install various tools and depenencies
       command: "pacman {{ pac_args }} -S devtools base-devel htop tree"
