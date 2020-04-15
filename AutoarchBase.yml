@@ -47,7 +47,7 @@
     ## encrypt
     - block:
         - include_role:
-          name: setup_LUKS
+            name: setup_LUKS
         vars:
           device: "{{ system_part }}"
           # passphrase: "{{ tmpdir0 }}/vault/{{ luks_passphrase }}"
