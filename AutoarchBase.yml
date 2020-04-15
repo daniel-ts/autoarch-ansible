@@ -17,7 +17,7 @@
     # do not use tmpfile module: it is unyielding
     - name: create temporary ansible directory
       file:
-        path: "{{ tmpdir 0}}"
+        path: "{{ tmpdir0 }}"
         state: directory
         force: yes
         mode: '0700'
