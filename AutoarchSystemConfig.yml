@@ -80,4 +80,11 @@
 
     # finally
     - name: install various tools and depenencies
-      command: "pacman {{ pac_args }} -S devtools base-devel htop tree"
+      pacman:
+        state: present
+        extra_args: "{{ pac_args }}"
+        name:
+          - devtools
+          - base-devel
+          - htop
+          - tree
