@@ -57,6 +57,23 @@ Damit ich das PW nicht dauernd eingeben muss, ist es in einer vault-password-fil
 ... und landen auf Github. Die sollten entfernt werden.
 *** TODO host_vars aufräumen
 *** TODO allgemeine Refaktorisierung und Pflege
+** Migration auf Pull
+Besser, weil alles in einem Git Repo liegt und ich das nur runterziehen und ausführen muss. Problem: Sensible Dateien, die nicht im Repo sind. Sie können extern nachgeliefert oder erfragt werden.
+*** Daten die gebraucht werden
+**** TODO LUKS Daten
+***** TODO transfer des keys erst in der =setup_LUKS= role
+***** TODO initramfs key kann erzeugt werden
+Das kann ein command erledigen: dd if=/dev/random of=/tmp/...
+***** TODO LUKS passphrase kann erfragt werden
+... und dann in eine Datei geschrieben werden:
+****** TODO Prompt confidential luks_passphrase_var
+ansible =vars_prompt= module
+****** TODO create temporary directory
+ansible =tempfile= module
+****** TODO create template in =setup_LUKS= module
+content is: ={{ luks_passphrase_var }}= and copy it to the tmp dir
+****** TODO only when interactive...
+***** TODO wenn alles fertig, tmp dir löschen
 * Notizen
 ** LUKS
 *** Was ist ein LUKS Keyfile?

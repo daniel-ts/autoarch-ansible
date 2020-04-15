@@ -18,9 +18,10 @@ system_part: /dev/sda2
 efi_size: 256
 swap_size: 8192
 
-luks_passphrase: "vault/hosts/wife/wife_passphrase"
-luks_keyfile: "vault/hosts/wife/wife_crypto_keyfile.bin"
+luks_passphrase: "vault/hosts/wife/luks_passphrase"
+luks_keyfile: "vault/hosts/wife/crypto_keyfile.bin"
 luks_syspart_name: cryptroot
+luks_interactive: yes
 
 rootpw: "$6$sercetsalt$HhihtEXfpW..9m3NjqjDYgmL7wi9m/sH7gjuefoNiK7hy7ajWZ06BAVdpiYIfzWBuiusknv1DydviBY28vyFd."
 

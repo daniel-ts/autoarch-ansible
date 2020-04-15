@@ -3,6 +3,38 @@
 # `keyfile` is required for alternative unlocking
 ---
 
+# transfer keyfiles
+- block:
+    # for interactive input to grub
+    - name: transfer passphrase file
+      copy:
+        src: "{{ luks_passphrase }}"
+        dest: "{{ tmpdir0 }}"
+        mode: '0600'
+        decrypt: yes
+
+    # to be embedded in the initramfs
+    - name: transfer keyfile
+      copy:
+        src: "{{ luks_keyfile }}"
+        dest: "{{ tmpdir0 }}"
+        mode: '0600'
+        decrypt: yes
+  when: not luks_interactive
+
+# create keyfiles
+- block:
+    - name: make temporary luks passphrase keyfile
+      template:
+        src: passphrase.j2
+        dest: "{{ tmpdir0 }}/luks_passphrase"
+        force: yes
+        mode: '0600'
+    - name: create initramfs crypto_keyfile.bin
+      command: "dd if=/dev/urandom of={{ tmpdir0 }}/crypto_keyfile.bin bs=512 count=4"
+  when: luks_interactive
+
+
 # for idempotency
 - name: check if LUKS is present on system partition
   command: lsblk -lin {{ device }} -o FSTYPE
@@ -10,7 +42,7 @@
   ignore_errors: True
 
 - name: if LUKS is present, check if the container can be opened with the key
-  command: cryptsetup luksOpen --test-passphrase --key-file {{ tmpdir0 }}/vault/{{ passphrase }} {{ device }}
+  command: cryptsetup luksOpen --test-passphrase --key-file {{ tmpdir0 }}/luks_passphrase {{ device }}
   when: fstype_syspart.stdout == 'crypto_LUKS'
   ignore_errors: True
   register: result
@@ -24,7 +56,7 @@
     #     state: present
     #     keyfile: "{{ keyfile }}"
     ## create luks container
-    - command: cryptsetup --batch-mode --type luks1 --cipher aes-xts-plain64 --key-size 256 --hash sha256 --iter-time 2000 --key-file {{passphrase}} luksFormat {{device}}
+    - command: cryptsetup --batch-mode --type luks1 --cipher aes-xts-plain64 --key-size 256 --hash sha256 --iter-time 2000 --key-file {{ tmpdir0 }}/luks_passphrase luksFormat {{device}}
     ## add keyfile to another slot
-    - command: cryptsetup --batch-mode --type luks1 --key-file {{passphrase}} luksAddKey {{device}} {{keyfile}}
+    - command: cryptsetup --batch-mode --type luks1 --key-file {{ tmpdir0 }}/luks_passphrase luksAddKey {{ device }} {{ tmpdir0 }}/crypto_keyfile.bin
   when: (result is failed) or (result is skipped)

@@ -5,16 +5,25 @@
 - hosts: arch_desktops
   user: root
   tasks:
+    ## interactivity: prompts at the beginning
+    - name: prompt for luks passphrase
+      vars_prompt:
+        name: luks_passphrase_var
+        private: yes
+      when: luks_interactive
+
     ## configure live environment
     - include_role:
         name: change_hostname
 
     - name: create temporary ansible directory
-      file:
+      tempfile:
         state: directory
-        path: "{{ tmpdir0 }}"
-        mode: '0700'
+        prefix: "autoarch."
+        suffix: "build"
+      register: "tmpdir0"
 
+    # do I really need it?
     - name: make a vault directory inside the ansible directory
       file:
         path: "{{ tmpdir0 }}/vault"
@@ -38,20 +47,7 @@
 
     ## encrypt
     - block:
-      # for interactive use
-      - name: transfer passphrase file
-        copy:
-          src: "{{ luks_passphrase }}"
-          dest: "{{ tmpdir0 }}/vault"
-          mode: '0600'
-          decrypt: yes
-      # to be embedded in the initramfs
-      - name: transfer keyfile
-        copy:
-          src: "{{ luks_keyfile }}"
-          dest: "{{ tmpdir0 }}/vault"
-          mode: '0600'
-          decrypt: yes
+
 
       - include_role:
           name: setup_LUKS
@@ -173,6 +169,12 @@
       when: not use_efi
 
     ## end
+    - name: delete temporary direcory
+      file:
+        path: "{{ tmpdir0 }}"
+        state: absent
+        force: yes
+
     - include_tasks: roles/btrfs_layout_flat/unmount.yml
       vars:
         mountpoint: "{{ sys_mount }}"
