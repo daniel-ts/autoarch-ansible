@@ -79,18 +79,20 @@
           become_user: builder
           become_method: sudo
 
-        - name: fetch polybar from AUR
+        - name: fetch picom-tryone from AUR
           command: "{{ aur_sync }} picom-tyrone-git"
           become: yes
           become_user: builder
           become_method: sudo
 
-        - name: install polybar
+        - name: update package cache
           pacman:
-            name: "custom/polybar"
-            extra_args: "{{ pac_args }}"
+            update_cache: yes
+            update_cache_extra_args: "{{ pac_args }}"
 
-        - name: install picom-tryone-git
+        - name: install AUR packages from custom
           pacman:
-            name: "custom/picom-tryone-git"
+            name:
+              - "custom/polybar"
+              - "custom/picom-tryone-git"
             extra_args: "{{ pac_args }}"
