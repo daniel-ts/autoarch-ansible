@@ -1,8 +1,8 @@
 
-/dev/mapper/{{ luks_syspart_name}}  /            btrfs  rw,relatime,compress=zstd:3,space_cache,subvolid=257,subvol=@           0 0
+/dev/mapper/{{ luks_syspart_name}}  /            btrfs  rw,relatime,compress=zstd:3,space_cache,subvol=@           0 0
 
-/dev/mapper/{{ luks_syspart_name}}  /home        btrfs  rw,relatime,compress=zstd:3,space_cache,subvolid=258,subvol=@home       0 0
+/dev/mapper/{{ luks_syspart_name}}  /home        btrfs  rw,relatime,compress=zstd:3,space_cache,subvol=@home       0 0
 
-/dev/mapper/{{ luks_syspart_name}}  /.snapshots  btrfs  rw,relatime,compress=zstd:3,space_cache,subvolid=259,subvol=@snapshots  0 0
+/dev/mapper/{{ luks_syspart_name}}  /.snapshots  btrfs  rw,relatime,compress=zstd:3,space_cache,subvol=@snapshots  0 0
 
-/dev/mapper/swap                     none         swap   defaults                                                                0 0
+/dev/mapper/swap                     none         swap   defaults                                                  0 0
