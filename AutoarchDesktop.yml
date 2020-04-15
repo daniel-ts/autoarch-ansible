@@ -4,7 +4,7 @@
 - hosts: arch_desktops
   user: root
   vars:
-    aur_sync: "aur sync -d custom --noconfirm --noview"
+    aur_sync: "sudo -u builder aur sync -d custom --noconfirm --noview"
     pac_args: "--noconfirm --quiet --noprogressbar"
   tasks:
     ## preparation
@@ -75,15 +75,9 @@
       block:
         - name: fetch polybar from AUR
           command: "{{ aur_sync }} polybar"
-          become: yes
-          become_user: builder
-          become_method: sudo
 
         - name: fetch picom-tryone from AUR
-          command: "{{ aur_sync }} picom-tyrone-git"
-          become: yes
-          become_user: builder
-          become_method: sudo
+          command: "{{ aur_sync }} picom-tryone-git"
 
         - name: update package cache
           pacman:
@@ -96,3 +90,5 @@
               - "custom/polybar"
               - "custom/picom-tryone-git"
             extra_args: "{{ pac_args }}"
+        # unstable action
+        ignore_errors: yes
