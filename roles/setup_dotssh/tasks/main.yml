@@ -26,3 +26,4 @@
     group: "{{ group }}"
   with_fileglob:
     - "{{ dotssh_dir }}/*"
+  ignore_errors: yes
