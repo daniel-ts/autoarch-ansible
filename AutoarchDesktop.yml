@@ -91,10 +91,10 @@
           become_user: builder
           become_method: sudo
 
-        -name: install polybar
-         pacman:
-           name: "custom/polybar"
-           extra_args: "{{ pac_args }}"
+        - name: install polybar
+          pacman:
+            name: "custom/polybar"
+            extra_args: "{{ pac_args }}"
 
         - name: install picom-tryone-git
           pacman:
