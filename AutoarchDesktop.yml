@@ -25,9 +25,6 @@
         upgrade: yes
         extra_args: "{{ pac_args }}"
 
-    - include_role:
-        name: arch_aurutils
-
     # ## drivers
     - name: install video drivers
       pacman:
