@@ -4,13 +4,17 @@
 ---
 - hosts: arch_desktops
   user: root
+  vars_prompt:
+    name: luks_passphrase_var
+    prompt: "luks passphrase (will be ignored when luks_interactive is yes): "
+    private: yes
   tasks:
-    ## interactivity: prompts at the beginning
-    - name: prompt for luks passphrase
-      vars_prompt:
-        name: luks_passphrase_var
-        private: yes
-      when: luks_interactive
+    ## interactivity: prompts at the beginning ... is not possible
+    # - name: prompt for luks passphrase
+    #   vars_prompt:
+    #     name: luks_passphrase_var
+    #     private: yes
+    #   when: luks_interactive
 
     ## configure live environment
     - include_role:
@@ -81,7 +85,7 @@
 
     ## bootstrap arch
     - name: bootstrap arch linux
-      command: pacstrap {{ sys_mount }} base linux linux-firmware grub btrfs-progs nano
+      command: pacstrap {{ sys_mount }} base linux linux-firmware grub btrfs-progs nano ansible
 
     - name: install efibootmgr
       command: pacstrap {{ sys_mount }} efibootmgr
