@@ -90,5 +90,5 @@
               - "custom/polybar"
               - "custom/picom-tryone-git"
             extra_args: "{{ pac_args }}"
-        # unstable action
-        ignore_errors: yes
+      # unstable action
+      ignore_errors: yes
