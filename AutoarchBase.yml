@@ -46,9 +46,7 @@
 
     ## encrypt
     - block:
-
-
-      - include_role:
+        - include_role:
           name: setup_LUKS
         vars:
           device: "{{ system_part }}"
@@ -76,7 +74,7 @@
         tmpdir: "{{ tmpdir0 }}"
 
     - name: mark swap partition
-      command: mkswap {{ swap_part }}
+      command: mkswap --force {{ swap_part }}
 
     ## bootstrap arch
     - name: bootstrap arch linux
