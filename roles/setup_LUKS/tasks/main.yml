@@ -31,7 +31,7 @@
         force: yes
         mode: '0600'
     - name: create initramfs crypto_keyfile.bin
-      command: "dd if=/dev/urandom of={{ tmpdir0 }}/crypto_keyfile.bin bs=512 count=4"
+      command: dd if=/dev/urandom of={{ tmpdir0 }}/crypto_keyfile.bin bs=512 count=4
   when: luks_interactive
 
 
@@ -54,7 +54,7 @@
     # - luks_device:
     #     device: "{{ device }}"
     #     state: present
-    #     keyfile: "{{ keyfile }}"
+    #     keyfile: "{{ luks_keyfile }}"
     ## create luks container
     - command: cryptsetup --batch-mode --type luks1 --cipher aes-xts-plain64 --key-size 256 --hash sha256 --iter-time 2000 --key-file {{ tmpdir0 }}/luks_passphrase luksFormat {{device}}
     ## add keyfile to another slot

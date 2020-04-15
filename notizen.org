@@ -329,3 +329,7 @@ Dieses Skript bestimmt die Erstellung des Initramfs Images, welches den Kernel u
 
 → install+config.
 Präfix wird sein: archpkg_
+
+*** Beispielhafte Ausgabe des command Moduls:
+TASK [setup_LUKS : create initramfs crypto_keyfile.bin] ************************************task path: /root/.ansible/pull/wife/roles/setup_LUKS/tasks/main.yml:33
+fatal: [wife]: FAILED! => {"changed": true, "cmd": ["dd", "if=/dev/urandom", "of={changed:", "True,", "path:", "/tmp/autoarch.efam8853build,", "uid:", "0,", "gid:", "0,", "owner:", "root,", "group:", "root,", "mode:", "0700,", "state:", "directory,", "size:", "40,", "failed:", "False}/crypto_keyfile.bin", "bs=512", "count=4"], "delta": "0:00:00.008649", "end": "2020-04-15 00:39:04.439327", "msg": "non-zero return code", "rc": 1, "start": "2020-04-15 00:39:04.430678", "stderr": "dd: unrecognized operand ‘True,’\nTry 'dd --help' for more information.", "stderr_lines": ["dd: unrecognized operand ‘True,’", "Try 'dd --help' for more information."], "stdout": "", "stdout_lines": []}

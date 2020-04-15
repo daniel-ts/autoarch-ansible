@@ -6,33 +6,28 @@
   user: root
   vars_prompt:
     name: luks_passphrase_var
-    prompt: "luks passphrase (will be ignored when luks_interactive is yes): "
+    prompt: "luks passphrase (will be ignored when luks_interactive is yes)"
     private: yes
   tasks:
-    ## interactivity: prompts at the beginning ... is not possible
-    # - name: prompt for luks passphrase
-    #   vars_prompt:
-    #     name: luks_passphrase_var
-    #     private: yes
-    #   when: luks_interactive
 
     ## configure live environment
     - include_role:
         name: change_hostname
 
+    # do not use tmpfile module: it is unyielding
     - name: create temporary ansible directory
-      tempfile:
+      file:
+        path: "{{ tmpdir 0}}"
         state: directory
-        prefix: "autoarch."
-        suffix: "build"
-      register: "tmpdir0"
+        force: yes
+        mode: '0700'
 
     # do I really need it?
-    - name: make a vault directory inside the ansible directory
-      file:
-        path: "{{ tmpdir0 }}/vault"
-        state: directory
-        mode: '0700'
+    # - name: make a vault directory inside the ansible directory
+    #   file:
+    #     path: "{{ tmpdir0 }}/vault"
+    #     state: directory
+    #     mode: '0700'
 
     - name: create the sys_mount mount point
       file:
@@ -57,8 +52,8 @@
           name: setup_LUKS
         vars:
           device: "{{ system_part }}"
-          passphrase: "{{ tmpdir0 }}/vault/{{ luks_passphrase }}"
-          keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
+          # passphrase: "{{ tmpdir0 }}/vault/{{ luks_passphrase }}"
+          # keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
 
       - name: open encrypted system partition
         luks_device:
