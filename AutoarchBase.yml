@@ -50,8 +50,8 @@
           name: setup_LUKS
         vars:
           device: "{{ system_part }}"
-          # passphrase: "{{ tmpdir0 }}/vault/{{ luks_passphrase }}"
-          # keyfile: "{{ tmpdir0 }}/vault/{{ luks_keyfile }}"
+          # passphrase: "{{ tmpdir0 }}/luks_passphrase"
+          # keyfile: "{{ tmpdir0 }}/crypto_keyfile.bin"
 
       - name: open encrypted system partition
         luks_device:
@@ -151,10 +151,12 @@
     ## configure bootloader
     - name: save keyfile to /
       copy:
-        src: "{{ luks_keyfile }}"
+        src: "{{ tmpdir0 }}/crypto_keyfile.bin"
         dest: "{{ sys_mount }}/crypto_keyfile.bin"
         mode: '0600'
-        decrypt: yes
+        owner: root
+        group: root
+        remote_src: yes
         force: yes
 
     - include_role:
@@ -172,6 +174,7 @@
         state: absent
         force: yes
 
-    - include_tasks: roles/btrfs_layout_flat/unmount.yml
-      vars:
-        mountpoint: "{{ sys_mount }}"
+    # does not need unmounting because either the istallation may continue or a reboot is following
+    # - include_tasks: roles/btrfs_layout_flat/unmount.yml
+    #   vars:
+    #     mountpoint: "{{ sys_mount }}"
