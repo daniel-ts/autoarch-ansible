@@ -12,7 +12,7 @@ EOF
 
 [ -z "$1" ] && (usage; exit 0)
 
-SYS_MOUNT="/mnt/arch_chroot"
+SYS_MOUNT="/mnt/arch_root"
 alias SYS_CHROOT="arch-chroot $SYS_MOUNT"
 AP_PARAMS='-vv --accept-host-key -i inventory --url "https://github.com/daniel-ts/autoarch-ansible.git"'
 
