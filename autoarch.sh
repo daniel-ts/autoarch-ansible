@@ -19,5 +19,5 @@ AP_PARAMS='-vv --accept-host-key -i inventory --url "https://github.com/daniel-t
 if hostname "$1"; then
     ansible-pull $AP_PARAMS AutoarchBase.yml \
 	&& SYS_CHROOT ansible-pull $AP_PARAMS AutoarchSystemConfig.yml \
-	&& SYS_CHROOT ansible-pull $AP_PARAMS AutoarchSystemConfig.yml
+	&& SYS_CHROOT ansible-pull $AP_PARAMS AutoarchDesktop.yml
 fi
