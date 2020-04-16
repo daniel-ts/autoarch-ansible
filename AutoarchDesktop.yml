@@ -50,15 +50,19 @@
           - xorg
           - xorg-xinit
           - "i3-gaps"
-          # - xcompmgr
+          - xclip
+          - xcompmgr
           - termite
           - conky
           - firefox
           - keepass
           - feh
-          - mpd
-          - vlc
+          - "community/rofi"
           - nitrogen
+          - "community/ttf-font-awesome"
+          - "community/ttf-liberation"
+          - "community/ttf-inconsolata"
+          - "community/ttf-ubuntu-font-family"
         state: present
         extra_args: "{{ pac_args }}"
 

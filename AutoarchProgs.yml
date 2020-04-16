@@ -1,0 +1,24 @@
+# file: AutoarchProgs.yml
+# Playbook to setup the rest of my programs
+
+- hosts: arch_desktops
+  user: root
+  vars:
+    aur_sync: "sudo -u builder aur sync -d custom --noconfirm --noview"
+    pac_args: "--noconfirm --quiet --noprogressbar"
+  tasks:
+
+    - name: update package cache (pacman -Sy)
+      pacman:
+        update_cache: yes
+        update_cache_extra_args: "{{ pac_args }}"
+
+    - name: churn through program list
+      pacman:
+        extra_args: "{{ pac_args }}"
+        name:
+          - mpd
+          - vlc
+          - seahorse
+          - kgpg
+          - flameshot
