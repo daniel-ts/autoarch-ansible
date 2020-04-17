@@ -63,6 +63,8 @@
           - "community/ttf-liberation"
           - "community/ttf-inconsolata"
           - "community/ttf-ubuntu-font-family"
+          - "community/ttf-jetbrains-mono"
+          # - "community/ttf-anonymous-pro"
         state: present
         extra_args: "{{ pac_args }}"
 

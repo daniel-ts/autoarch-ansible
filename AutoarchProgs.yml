@@ -21,4 +21,6 @@
           - vlc
           - seahorse
           - kgpg
+          - xca
           - flameshot
+          - xkcdpass
