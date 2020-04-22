@@ -20,7 +20,24 @@
           - mpd
           - vlc
           - seahorse
+          - "community/openssh-askpass"
+          - "community/lxqt-openssh-askpass"
           - kgpg
+          - encfs
           - xca
           - flameshot
           - xkcdpass
+          - nmap
+          - transmission-gtk
+          - transmission-cli
+          - dunst
+          - "extra/graphviz"
+          - "community/torbrowser-launcher"
+          - "community/offlineimap"
+          - "community/nullmailer"
+          - "extra/python-pip"
+          - "community/zathura"
+          - "community/zathura-pdf-poppler"
+          - "extra/zip"
+          - "extra/unzip"
+          - "extra/texlive-most"
