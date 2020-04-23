@@ -41,3 +41,4 @@
           - "extra/zip"
           - "extra/unzip"
           - "extra/texlive-most"
+          - "community/yad"  # location picker
