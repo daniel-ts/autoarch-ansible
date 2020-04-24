@@ -42,3 +42,5 @@
           - "extra/unzip"
           - "extra/texlive-most"
           - "community/yad"  # location picker
+          - "extra/smbclient"
+          - "extra/unrar"
