@@ -44,3 +44,6 @@
           - "community/yad"  # location picker
           - "extra/smbclient"
           - "extra/unrar"
+          - "extra/libreoffice-fresh"
+          - "community/simple-scan"
+          - "community/virt-manager"
