@@ -17,6 +17,7 @@
       pacman:
         extra_args: "{{ pac_args }}"
         name:
+          - "core/man-pages"
           - mpd
           - vlc
           - seahorse
@@ -46,4 +47,10 @@
           - "extra/unrar"
           - "extra/libreoffice-fresh"
           - "community/simple-scan"
-          - "community/virt-manager"
+          # - "community/virt-manager"
+          # - "community/lxc"
+          # - "community/lxcfs"
+          # - "community/lxd"
+          - "community/packer"
+          - "community/pyenv"
+          - "community/wmctrl"

@@ -1,5 +1,9 @@
 # file: create_filesystems.yml
 # creates only the genric filesystems for EFI and SWAP
+# external vars:
+# efi_part
+# swap_part
+# use_swapfile
 ---
 
 - name: format EFI partiton

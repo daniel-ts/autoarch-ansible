@@ -1,4 +1,9 @@
 # file: partition.yml
+# external vars:
+# grub_device
+# efi_size
+# swap_size
+# use_swapfile
 ---
 
 - name: create EFI partition
